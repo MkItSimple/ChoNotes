@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@id/splashFragment"
+    >
+
+    <fragment
+        android:id="@+id/splashFragment"
+        android:name="cho.chonotes.framework.presentation.splash.SplashFragment">
+
+        <action
+            android:id="@+id/action_splashFragment_to_noteListFragment"
+            app:destination="@id/noteListFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            app:popUpTo="@id/splashFragment"
+            app:popUpToInclusive="true"
+            />
+    </fragment>
+
+    <fragment
+        android:id="@+id/noteListFragment"
+        android:name="cho.chonotes.framework.presentation.notelist.NoteListFragment"
+        >
+        <action
+            android:id="@+id/action_note_list_fragment_to_noteDetailFragment"
+            app:destination="@id/noteDetailFragment"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"/>
+        <action
+            android:id="@+id/action_noteListFragment_to_folderListFragment"
+            app:destination="@id/folderListFragment"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popUpTo="@id/folderListFragment"
+            app:popUpToInclusive="true"/>
+        <action
+            android:id="@+id/action_noteListFragment_to_selectFolderFragment"
+            app:destination="@id/selectFolderFragment"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popUpTo="@id/folderListFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/noteDetailFragment"
+        android:name="cho.chonotes.framework.presentation.notedetail.NoteDetailFragment"
+        >
+
+        <action
+            android:id="@+id/action_note_detail_fragment_to_noteListFragment"
+            app:destination="@id/noteListFragment"
+            app:popEnterAnim="@anim/slide_in_right"
+            app:popExitAnim="@anim/slide_out_left"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right"
+            app:popUpTo="@id/noteListFragment"
+            app:popUpToInclusive="true"
+            />
+    </fragment>
+    <fragment
+        android:id="@+id/folderListFragment"
+        android:name="cho.chonotes.framework.presentation.folderlist.FolderListFragment"
+        android:label="FolderListFragment" >
+        <action
+            android:id="@+id/action_folderListFragment_to_noteListFragment"
+            app:destination="@id/noteListFragment"
+            app:popEnterAnim="@anim/slide_in_right"
+            app:popExitAnim="@anim/slide_out_left"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right"/>
+    </fragment>
+    <fragment
+        android:id="@+id/selectFolderFragment"
+        android:name="cho.chonotes.framework.presentation.selectfolder.SelectFolderFragment"
+        android:label="fragment_select_folder"
+        tools:layout="@layout/fragment_select_folder" >
+        <action
+            android:id="@+id/action_selectFolderFragment_to_noteListFragment"
+            app:destination="@id/noteListFragment"
+            app:popEnterAnim="@anim/slide_in_right"
+            app:popExitAnim="@anim/slide_out_left"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right"
+            app:popUpTo="@id/noteListFragment"
+            app:popUpToInclusive="true"/>
+    </fragment>
+
+
+</navigation>

@@ -1,0 +1,43 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="1500dp"
+    android:height="1500dp"
+    android:viewportWidth="1500"
+    android:viewportHeight="1500">
+  <path
+      android:pathData="M0,0h1500v1500h-1500z"
+      android:strokeWidth="1"
+      android:fillColor="#00000000"
+      android:strokeColor="#00000000"/>
+  <path
+      android:pathData="M0.5,0.5h1499v1499h-1499z"
+      android:strokeWidth="1"
+      android:fillColor="#00000000"
+      android:strokeColor="#00000000"/>
+  <path
+      android:pathData="M0,0L1500,0L1500,1500L0,1500ZM941,244l-1,1h-9l-11,2 -24,8 -17,9 -18,13 -11,11 -18,24 -35,48 -2,5 238,161 24,16h2l53,-80 6,-20 3,-17v-9l1,-1 -1,-30 -4,-19 -5,-15 -13,-25 -16,-21 -14,-15 -16,-13 -12,-8 -27,-13 -18,-6 -18,-4 -16,-1 -1,-1ZM760,426l-15,21 258,174 13,-19v-2L780,438l-18,-12ZM706,503L395,949v13l-1,1v13l-1,1v13l-1,1v13l-1,1 -1,28 -1,1v13l-1,1v13l-1,1v13l-1,1v13l-1,1v13l-1,1v13l-1,1v13l-1,1v13l-1,1v13l-1,1v13l-1,1v14l-1,1v13l-1,1v13l-1,1 -2,41h3l281,-127L964,679Z"
+      android:fillColor="#00000000"/>
+  <path
+      android:pathData="M1044.5,272l18,13 18.5,17.5 19,25 13,26 7,25 1,15 1,1v20l-1,1v9l-1,1 -1,11 -7,25L1058.5,542h-2l-12,-8L923,451.5Z"
+      android:fillColor="#EEEFEA"/>
+  <path
+      android:pathData="M884.5,510 L1016,599.5v2L1003,621 870,532l1,-3.5Z"
+      android:fillColor="#EEEFEA"/>
+  <path
+      android:pathData="M831.5,588 L964,678.5 657.5,1131l-277,125 0.5,-1.5Z"
+      android:fillColor="#EEEFEA"/>
+  <path
+      android:pathData="M940.5,244l30,1 25,5 25,9 23.5,12v2.5l-8,12L923.5,451 795,364.5l2,-5 35,-48 18,-24L860.5,277l18,-13 17,-9 24,-8 11,-2h9Z"
+      android:fillColor="#FFFFFF"/>
+  <path
+      android:pathData="M1068.5,290l1,2Z"
+      android:fillColor="#FFFFFF"/>
+  <path
+      android:pathData="M1081.5,303l1,2Z"
+      android:fillColor="#FFFFFF"/>
+  <path
+      android:pathData="M759.5,426h2l18,12L884,509.5 869.5,531 745,446.5Z"
+      android:fillColor="#FFFFFF"/>
+  <path
+      android:pathData="M705.5,503 L831,587l-20,31.5L378.5,1257l-4.5,1 2,-41.5 1,-1v-13l1,-1v-13l1,-1v-14l1,-1v-13l1,-1v-13l1,-1v-13l1,-1v-13l1,-1v-13l1,-1v-13l1,-1v-13l1,-1v-13l1,-1v-13l1,-1v-13l1,-1 1,-28 1,-1v-13l1,-1v-13l1,-1v-13l1,-1v-13Z"
+      android:fillColor="#FFFFFF"/>
+</vector>
