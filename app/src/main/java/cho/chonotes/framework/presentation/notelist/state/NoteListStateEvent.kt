@@ -4,7 +4,6 @@ import cho.chonotes.business.domain.model.Note
 import cho.chonotes.business.domain.state.StateEvent
 import cho.chonotes.business.domain.state.StateMessage
 
-
 sealed class NoteListStateEvent: StateEvent {
 
     class InsertNewNoteEvent(
@@ -23,7 +22,6 @@ sealed class NoteListStateEvent: StateEvent {
         override fun shouldDisplayProgressBar() = true
     }
 
-    // for testing
     class InsertMultipleNotesEvent(
         val numNotes: Int
     ): NoteListStateEvent() {
@@ -127,7 +125,6 @@ sealed class NoteListStateEvent: StateEvent {
         override fun shouldDisplayProgressBar() = false
     }
 
-    // added
     class MoveNotesEvent(
         val selectedNotes: List<Note>,
         val folderId: String
@@ -143,7 +140,6 @@ sealed class NoteListStateEvent: StateEvent {
 
         override fun shouldDisplayProgressBar() = true
     }
-
 }
 
 

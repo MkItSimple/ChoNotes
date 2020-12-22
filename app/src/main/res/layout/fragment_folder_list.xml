@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:elevation="8dp"
         android:padding="15dp"
-        android:text="ChoCho"
+        android:text="@string/dummy_text"
         android:textAlignment="center"
         android:textColor="@color/black"
         android:textSize="16sp"
@@ -36,7 +36,8 @@
             android:id="@+id/toolbar_content_container"
             android:layout_width="match_parent"
             android:layout_height="@dimen/toolbar_height"
-            android:orientation="horizontal"></LinearLayout>
+            android:orientation="horizontal">
+        </LinearLayout>
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -88,22 +89,25 @@
             android:src="@drawable/ic_baseline_delete_24"
             app:layout_constraintEnd_toStartOf="@+id/action_rename_folder"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:contentDescription="@string/content_description" />
 
         <ImageView
             android:id="@+id/action_rename_folder"
-            android:layout_width="200dp"
+            android:layout_width="0dp"
             android:layout_height="24dp"
             android:layout_marginTop="-5dp"
             android:src="@drawable/ic_rename"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/action_delete_folders"
+            android:contentDescription="@string/content_description"/>
 
         <TextView
             android:id="@+id/action_delete_folders_tv"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Delete"
+            android:text="@string/delete"
             android:textAlignment="center"
             android:textSize="12sp"
             android:textColor="@color/black"
@@ -115,16 +119,17 @@
 
         <TextView
             android:id="@+id/action_rename_folder_tv"
-            android:layout_width="200dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Rename"
+            android:text="@string/rename"
             android:textSize="12sp"
             android:textColor="@color/black"
             android:fontFamily="@font/montserrat_light"
             android:textAlignment="center"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/action_rename_folder"
-            app:layout_constraintTop_toBottomOf="@+id/action_rename_folder"/>
+            app:layout_constraintTop_toBottomOf="@+id/action_rename_folder"
+            app:layout_constraintStart_toEndOf="@+id/action_delete_folders_tv"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

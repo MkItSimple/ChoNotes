@@ -23,8 +23,6 @@ data class Note(
         if (note_id != other.note_id) return false
         if (title != other.title) return false
         if (body != other.body) return false
-        if (note_folder_id != other.note_folder_id) return false
-        if (uid != other.uid) return false
         if (created_at != other.created_at) return false
 
         return true
@@ -34,8 +32,6 @@ data class Note(
         var result = note_id.hashCode()
         result = 31 * result + title.hashCode()
         result = 31 * result + body.hashCode()
-        result = 31 * result + note_folder_id.hashCode()
-        result = 31 * result + uid.hashCode()
         result = 31 * result + created_at.hashCode()
         return result
     }

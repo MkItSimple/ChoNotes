@@ -21,7 +21,6 @@ interface NoteCacheDataSource{
         timestamp: String?
     ): Int
 
-    // added
     suspend fun moveNotes(
         notes: List<Note>,
         newFolderId: String?,
@@ -40,6 +39,7 @@ interface NoteCacheDataSource{
         timestamp: String?
     ): Int
 
+    // for testing
     suspend fun searchNotes(
         uid: String,
         query: String,

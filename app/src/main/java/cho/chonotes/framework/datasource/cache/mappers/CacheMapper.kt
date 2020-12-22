@@ -1,19 +1,13 @@
 package cho.chonotes.framework.datasource.cache.mappers
 
 import cho.chonotes.business.domain.model.Note
-import cho.chonotes.business.domain.util.DateUtil
 import cho.chonotes.business.domain.util.EntityMapper
 import cho.chonotes.framework.datasource.cache.model.NoteCacheEntity
 import javax.inject.Inject
 
-/**
- * Maps Note to NoteCacheEntity or NoteCacheEntity to Note.
- */
 class CacheMapper
 @Inject
-constructor(
-    private val dateUtil: DateUtil
-): EntityMapper<NoteCacheEntity, Note>
+constructor(): EntityMapper<NoteCacheEntity, Note>
 {
 
     fun entityListToNoteList(entities: List<NoteCacheEntity>): List<Note>{

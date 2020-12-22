@@ -14,11 +14,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import javax.inject.Singleton
 
-
-/*
-    Dependencies in this class have test fakes for ui tests. See "TestModule.kt" in
-    androidTest dir
- */
 @ExperimentalCoroutinesApi
 @FlowPreview
 @Module
@@ -60,7 +55,6 @@ object ProductionModule {
     fun provideFirebaseFirestore(): FirebaseFirestore {
         return FirebaseFirestore.getInstance()
     }
-
 
 }
 

@@ -3,7 +3,6 @@ package cho.chonotes.framework.presentation.folderlist
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.appcompat.widget.Toolbar
@@ -14,13 +13,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.customview.customView
-import com.afollestad.materialdialogs.customview.getCustomView
+import androidx.recyclerview.widget.RecyclerView
 import cho.chonotes.R
 import cho.chonotes.business.domain.model.Folder
+import cho.chonotes.business.domain.model.Note
 import cho.chonotes.business.domain.state.*
-import cho.chonotes.business.domain.util.DateUtil
 import cho.chonotes.business.interactors.common.DeleteFolder.Companion.DELETE_FOLDER_PENDING
 import cho.chonotes.business.interactors.common.DeleteFolder.Companion.DELETE_FOLDER_SUCCESS
 import cho.chonotes.business.interactors.folderlist.DeleteMultipleFolders.Companion.DELETE_FOLDERS_ARE_YOU_SURE
@@ -36,11 +33,15 @@ import cho.chonotes.framework.presentation.folderlist.state.FolderListToolbarSta
 import cho.chonotes.framework.presentation.folderlist.state.FolderListViewState
 import cho.chonotes.framework.presentation.notelist.NOTE_LIST_PREVIOUS_FRAGMENT_BUNDLE_KEY
 import cho.chonotes.framework.presentation.notelist.NOTE_LIST_SELECTED_FOLDER_BUNDLE_KEY
+import cho.chonotes.framework.presentation.notelist.NOTE_LIST_SELECTED_NOTES_BUNDLE_KEY
 import cho.chonotes.util.AndroidTestUtils
 import cho.chonotes.util.TodoCallback
-import cho.chonotes.util.printLogD
+import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.customview.customView
+import com.afollestad.materialdialogs.customview.getCustomView
 import kotlinx.android.synthetic.main.fragment_folder_list.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject
 
 const val FOLDER_LIST_STATE_BUNDLE_KEY = "cho.chonotes.notes.framework.presentation.folderlist.state"
@@ -49,8 +50,7 @@ const val FOLDER_LIST_STATE_BUNDLE_KEY = "cho.chonotes.notes.framework.presentat
 @ExperimentalCoroutinesApi
 class FolderListFragment
 constructor(
-        private val viewModelFactory: ViewModelProvider.Factory,
-        private val dateUtil: DateUtil
+        private val viewModelFactory: ViewModelProvider.Factory
 ) : BaseNoteFragment(R.layout.fragment_folder_list),
         FolderListAdapter.Interaction,
         ItemTouchHelperAdapter
@@ -64,16 +64,8 @@ constructor(
 
         private var listAdapter: FolderListAdapter? = null
         private var itemTouchHelper: ItemTouchHelper? = null
-        private var selectedFoldersCount: Int? = null
 
-//        private val searchViewToolbar: Toolbar? = toolbar_content_container
-//                .findViewById<Toolbar>(R.id.searchview_toolbar)
-//
-//        private val multiselectToolbar: Toolbar? = toolbar_content_container
-//                .findViewById<Toolbar>(R.id.multiselect_toolbar)
-//
-////        private val MultiSelectToolbar: Toolbar? = toolbar_content_container
-////                .findViewById<Toolbar>(R.id.multiselect_toolbar)
+        private var selectedNotes: ArrayList<Note>? = null
 
         override fun onCreate(savedInstanceState: Bundle?) {
                 super.onCreate(savedInstanceState)
@@ -99,7 +91,6 @@ constructor(
                                         },
                                         onDismissCallback = object: TodoCallback {
                                                 override fun execute() {
-                                                        // if the folder is not restored, clear pending folder
                                                         viewModel.setFolderPendingDelete(null)
                                                 }
                                         }
@@ -118,6 +109,16 @@ constructor(
                 arguments?.clear()
         }
 
+        private fun getSelectedNotesFromNoteListFragment() {
+                arguments?.let { args ->
+                        (args.getParcelableArrayList<Note>(FOLDER_LIST_SELECTED_NOTES_BUNDLE_KEY) as ArrayList<Note>?)?.let { notes ->
+                                selectedNotes = notes
+                                viewModel.setToolbarState(SelectFolderState())
+                                clearArgs()
+                        }
+                }
+        }
+
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
                 super.onViewCreated(view, savedInstanceState)
 
@@ -128,7 +129,7 @@ constructor(
                 subscribeObservers()
                 restoreInstanceState(savedInstanceState)
 
-
+                getSelectedNotesFromNoteListFragment()
         }
 
         private fun restoreInstanceState(savedInstanceState: Bundle?) {
@@ -180,28 +181,25 @@ constructor(
 
         private fun subscribeObservers() {
 
-//                viewModel.foldersWithNotes.observe(viewLifecycleOwner, Observer { foldersWithNotes ->
-//                        if (foldersWithNotes.isNotEmpty()){
-//                        } else {
-//                                viewModel.setStateEvent(
-//                                        InsertDefaultFolderEvent()
-//                                )
-//                        }
-//                })
-
-
                 viewModel.toolbarState.observe(viewLifecycleOwner, Observer{ toolbarState ->
                         when(toolbarState){
 
                                 is MultiSelectionState -> {
                                         enableMultiSelectToolbarState()
                                         disableSearchViewToolbarState()
-                                        Log.d("action", "enableMultiSelectToolbarState")
+                                        disableSelectFolderToolbarState()
                                 }
 
                                 is SearchViewState -> {
                                         enableSearchViewToolbarState()
                                         disableMultiSelectToolbarState()
+                                        disableSelectFolderToolbarState()
+                                }
+
+                                is SelectFolderState -> {
+                                        enableSelectFolderToolbarState()
+                                        disableMultiSelectToolbarState()
+                                        disableSearchViewToolbarState()
                                 }
                         }
                 })
@@ -209,25 +207,8 @@ constructor(
                 viewModel.viewState.observe(viewLifecycleOwner, Observer{ viewState ->
 
                         if(viewState != null){
-//                                viewState.folderWithNotesCacheEntityList?.let { folderWithNotesList ->
-//                                        val folderWithNotesListSize = folderWithNotesList.size
-//
-//                                        for (i in 0..folderWithNotesList.size) {
-//                                                val folderName = folderWithNotesList[i].folderCacheEntity.folder_name
-//                                                Log.d("folderName", "folderName: $folderName")
-//                                        }
-//                                        Log.d("folderList", "folderWithNotesList: $folderWithNotesList")
-//                                }
-
-//                                val folderList = viewState.folderList
-//                                val folderWithNotesList = viewState.folderWithNotesList
-//
-////                                Log.d("lists", "folderList: $folderList")
-////                                Log.d("lists", "folderWithNotesList: $folderWithNotesList")
-
 
                                 viewState.folderList?.let { folderList ->
-                                        Log.d("folderList", "folderList: $folderList")
                                         if(viewModel.isPaginationExhausted()
                                                 && !viewModel.isQueryExhausted()){
                                                 viewModel.setQueryExhausted(true)
@@ -236,7 +217,6 @@ constructor(
                                         listAdapter?.notifyDataSetChanged()
                                 }
 
-                                // a folder been inserted or selected
                                 viewState.newFolder?.let { newFolder ->
                                         navigateToNoteListFragment(newFolder)
                                 }
@@ -245,7 +225,6 @@ constructor(
                 })
 
                 viewModel.shouldDisplayProgressBar.observe(viewLifecycleOwner, Observer {
-                        //printActiveJobs()
                         uiController.displayProgressBar(it)
                 })
 
@@ -284,14 +263,52 @@ constructor(
                         listAdapter = FolderListAdapter(
                                 this@FolderListFragment,
                                 viewLifecycleOwner,
-                                viewModel.folderListInteractionManager.selectedFolders,
-                                dateUtil
+                                viewModel.folderListInteractionManager.selectedFolders
                         )
-//                        itemTouchHelper?.attachToRecyclerView(this)
+                        addOnScrollListener(object: RecyclerView.OnScrollListener(){
+                                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                                        super.onScrollStateChanged(recyclerView, newState)
+                                        val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                                        val lastPosition = layoutManager.findLastVisibleItemPosition()
+                                        if (lastPosition == listAdapter?.itemCount?.minus(1)) {
+                                                viewModel.nextPage()
+                                        }
+                                }
+                        })
 
                         adapter = listAdapter
                 }
         }
+
+        private fun enableSelectFolderToolbarState(){
+                view?.let { v ->
+                        val view = View.inflate(
+                                v.context,
+                                R.layout.layout_selectfolder_toolbar,
+                                null
+                        )
+                        view.layoutParams = LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.MATCH_PARENT,
+                                LinearLayout.LayoutParams.MATCH_PARENT
+                        )
+                        toolbar_content_container.addView(view)
+                        setupSelectFolderToolbar(view)
+                }
+        }
+
+        private fun setupSelectFolderToolbar(parentView: View){
+
+                constraint_bottom.visibility = View.GONE
+
+                parentView
+                        .findViewById<ImageView>(R.id.action_exit)
+                        .setOnClickListener {
+                                findNavController().navigate(
+                                        R.id.action_folderListFragment_to_noteListFragment
+                                )
+                        }
+        }
+
 
         private fun enableMultiSelectToolbarState(){
                 view?.let { v ->
@@ -319,26 +336,17 @@ constructor(
                                 viewModel.setToolbarState(SearchViewState())
                         }
 
-//                parentView
-//                        .findViewById<ImageView>(R.id.action_delete_folders)
-//                        .setOnClickListener {
-//                                deleteFolders()
-//                        }
-
                 action_delete_folders.setOnClickListener {
                         showDeleteDialog()
-//                        deleteFolders()
                 }
 
                 action_rename_folder.setOnClickListener {
 
                         uiController.displayInputCaptureDialog(
-                                getString(cho.chonotes.R.string.text_enter_folder_name),
+                                getString(R.string.text_enter_folder_name),
                                 object: DialogInputCaptureCallback {
                                         override fun onTextCaptured(text: String) {
-//                                              val newFolder = viewModel.createNewFolder(folder_name = text)
                                                 val selectedFolder = viewModel.getSelectedFolders()[0]
-                                                Log.d("rename", "rename: $selectedFolder to $text")
                                                 viewModel.setStateEvent(
                                                         RenameFolderEvent(
                                                                 selectedFolder = selectedFolder,
@@ -352,37 +360,45 @@ constructor(
         }
 
         override fun onItemSelected(position: Int, item: Folder) {
+                if (selectedNotes != null) {
+                        val bundle = bundleOf(
+                                NOTE_LIST_SELECTED_FOLDER_BUNDLE_KEY to item,
+                                NOTE_LIST_SELECTED_NOTES_BUNDLE_KEY to selectedNotes,
+                                NOTE_LIST_PREVIOUS_FRAGMENT_BUNDLE_KEY to OTHER_FRAGMENT_NAME
+                        )
+                        findNavController().navigate(
+                                R.id.action_folderListFragment_to_noteListFragment,
+                                bundle
+                        )
+                        viewModel.setFolder(null)
+                } else {
+                        if(isMultiSelectionModeEnabled()){
+                                if (item.folder_id != "notes") {
+                                        viewModel.addOrRemoveFolderFromSelectedList(item)
+                                        val selectedFoldersCount = viewModel.getSelectedFolders().size
+                                        val textViewValue = "Selected $selectedFoldersCount"
+                                        select_folder_tv.visibility = View.VISIBLE
 
-                if(isMultiSelectionModeEnabled()){
-                        if (item.folder_id != "notes") {
-                                viewModel.addOrRemoveFolderFromSelectedList(item)
-                                val selectedFoldersCount = viewModel.getSelectedFolders().size
-                                val textViewValue = "Selected ${selectedFoldersCount.toString()}"
-                                select_folder_tv.let { textView ->
-                                        textView.visibility = View.VISIBLE
-                                }
-
-                                when {
-                                        selectedFoldersCount == 0 -> {
-                                                select_folder_tv.text = NONE_SELECTED
-                                                setIsClickable(false, 0.4F, false, 0.4F)
-                                        }
-                                        selectedFoldersCount == 1 ->{
-                                                select_folder_tv.text = textViewValue
-                                                setIsClickable(true, 1F, true, 1F)
-                                        }
-                                        selectedFoldersCount > 1 ->{
-                                                select_folder_tv.text = textViewValue
-                                                setIsClickable(true, 1F, false, 0.4F)
-                                        }
-                                        else -> {
-                                                // do nothing . . comment
+                                        when {
+                                                selectedFoldersCount == 0 -> {
+                                                        select_folder_tv.text = NONE_SELECTED
+                                                        setIsClickable(false, 0.4F, false, 0.4F)
+                                                }
+                                                selectedFoldersCount == 1 ->{
+                                                        select_folder_tv.text = textViewValue
+                                                        setIsClickable(true, 1F, true, 1F)
+                                                }
+                                                selectedFoldersCount > 1 ->{
+                                                        select_folder_tv.text = textViewValue
+                                                        setIsClickable(true, 1F, false, 0.4F)
+                                                }
+                                                else -> {}
                                         }
                                 }
                         }
-                }
-                else{
-                        viewModel.setFolder(item)
+                        else{
+                                viewModel.setFolder(item)
+                        }
                 }
         }
 
@@ -419,19 +435,10 @@ constructor(
                                                 uiComponentType = UIComponentType.AreYouSureDialog(
                                                         object : AreYouSureCallback {
                                                                 override fun proceed() {
-//                                                                        viewModel.deleteFolders()
-//                                                                        if (deleteFolderAndNotes == DELETE_FOLDER_AND_NOTES) {
-////                                                                                Log.d("delete", "delete folder and notes")
-//                                                                                viewModel.deleteFoldersAndNotes()
-//                                                                        } else {
-////                                                                                Log.d("delete", "delete folder only")
-                                                                                viewModel.deleteFolders(deleteFolderAndNotes)
-//                                                                        }
+                                                                        viewModel.deleteFolders(deleteFolderAndNotes)
                                                                 }
 
-                                                                override fun cancel() {
-                                                                        // do nothing
-                                                                }
+                                                                override fun cancel() {}
                                                         }
                                                 ),
                                                 messageType = MessageType.Info()
@@ -465,7 +472,7 @@ constructor(
                 add_new_note_fab.visibility = View.VISIBLE
 
                 val searchViewToolbar: Toolbar? = toolbar_content_container
-                        .findViewById<Toolbar>(R.id.searchview_toolbar)
+                        .findViewById(R.id.searchview_toolbar)
 
                 searchViewToolbar?.let { toolbar ->
 
@@ -475,8 +482,7 @@ constructor(
                                 override fun afterTextChanged(p0: Editable?) {}
                                 override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
                                 override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                                        val query = searchText.getText().toString().trim()
-                                        Log.d("action", "onTextChanged $searchText")
+                                        val query = searchText.text.toString().trim()
                                         viewModel.setQuery(query)
                                         startNewSearch()
                                 }
@@ -485,8 +491,14 @@ constructor(
 
         }
 
-
-
+        private fun disableSelectFolderToolbarState(){
+                view?.let {
+                        val view = toolbar_content_container
+                                .findViewById<Toolbar>(R.id.selectfolder_toolbar)
+                        toolbar_content_container.removeView(view)
+                        viewModel.clearSelectedFolders()
+                }
+        }
 
         private fun disableMultiSelectToolbarState(){
                 view?.let {
@@ -515,7 +527,7 @@ constructor(
                 add_new_note_fab.setOnClickListener {
 
                         uiController.displayInputCaptureDialog(
-                                getString(cho.chonotes.R.string.text_enter_folder_name),
+                                getString(R.string.text_enter_folder_name),
                                 object: DialogInputCaptureCallback {
                                         override fun onTextCaptured(text: String) {
                                                 val newFolder = viewModel.createNewFolder(folder_name = text)
@@ -530,10 +542,7 @@ constructor(
                 }
         }
 
-
-
         private fun startNewSearch(){
-                printLogD("DCM", "start new search")
                 viewModel.clearList()
                 viewModel.loadFirstPage()
         }
@@ -547,7 +556,7 @@ constructor(
 
         private fun setupFilterButton(){
                 val searchViewToolbar: Toolbar? = toolbar_content_container
-                        .findViewById<Toolbar>(R.id.searchview_toolbar)
+                        .findViewById(R.id.searchview_toolbar)
                 searchViewToolbar?.findViewById<ImageView>(R.id.action_filter)?.setOnClickListener {
                         showFilterDialog()
                 }
@@ -612,7 +621,7 @@ constructor(
                 }
         }
 
-        fun showDeleteDialog(){
+        private fun showDeleteDialog(){
                 activity?.let {
                         val dialog = MaterialDialog(it)
                                 .noAutoDismiss()
@@ -646,13 +655,11 @@ constructor(
         }
 
         override fun isFolderSelected(folder: Folder): Boolean {
-//                return viewModel.isFolderSelected(folder)
-                return true
+                return viewModel.isFolderSelected(folder)
         }
 
         override fun onItemSwiped(position: Int) {
 
-                // && position == 0 . . item on position 0 cannot be swipped
                 listAdapter?.getFolder(position)?.let { folder ->
                         if(!viewModel.isDeletePending() && folder.folder_id != NOTES){
                                 viewModel.beginPendingDelete(folder)
@@ -660,15 +667,14 @@ constructor(
                                 listAdapter?.notifyDataSetChanged()
                         }
                 }
-
-
         }
 
         companion object {
-                val THIS_FRAGMENT_NAME = "FolderListFragment"
-                val NOTES = "notes"
-                val NONE_SELECTED = "None selected"
-                val DELETE_FOLDER_AND_NOTES = "DELETE FOLDER AND NOTES"
-                val DELETE_FOLDER_ONLY = "DELETE FOLDER ONLY"
+                const val THIS_FRAGMENT_NAME = "FolderListFragment"
+                const val OTHER_FRAGMENT_NAME = "OtherFragmentName"
+                const val NOTES = "notes"
+                const val NONE_SELECTED = "None selected"
+                const val DELETE_FOLDER_AND_NOTES = "DELETE FOLDER AND NOTES"
+                const val DELETE_FOLDER_ONLY = "DELETE FOLDER ONLY"
         }
 }

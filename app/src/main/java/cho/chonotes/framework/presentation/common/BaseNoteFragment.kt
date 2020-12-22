@@ -84,16 +84,15 @@ constructor(
     override fun onAttach(context: Context) {
         inject()
         super.onAttach(context)
-        setUIController(null) // null in production
+        setUIController(null)
     }
 
     fun setUIController(mockController: UIController?){
 
-        // TEST: Set interface from mock
         if(mockController != null){
             this.uiController = mockController
         }
-        else{ // PRODUCTION: if no mock, get from context
+        else{
             activity?.let {
                 if(it is MainActivity){
                     try{

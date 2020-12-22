@@ -1,10 +1,10 @@
 package cho.chonotes.framework.presentation
 
 import android.app.Application
-import androidx.appcompat.app.AppCompatDelegate
 import cho.chonotes.di.AppComponent
 import cho.chonotes.di.DaggerAppComponent
-import kotlinx.coroutines.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 
 @FlowPreview
 @ExperimentalCoroutinesApi
@@ -22,6 +22,5 @@ open class BaseApplication : Application(){
             .factory()
             .create(this)
     }
-
 
 }

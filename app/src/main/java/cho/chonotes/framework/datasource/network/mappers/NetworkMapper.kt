@@ -6,30 +6,18 @@ import cho.chonotes.business.domain.util.EntityMapper
 import cho.chonotes.framework.datasource.network.model.NoteNetworkEntity
 import javax.inject.Inject
 
-/**
- * Maps Note to NoteNetworkEntity or NoteNetworkEntity to Note.
- */
 class NetworkMapper
 @Inject
 constructor(
     private val dateUtil: DateUtil
 ): EntityMapper<NoteNetworkEntity, Note>
 {
-
     fun entityListToNoteList(entities: List<NoteNetworkEntity>): List<Note>{
         val list: ArrayList<Note> = ArrayList()
         for(entity in entities){
             list.add(mapFromEntity(entity))
         }
         return list
-    }
-
-    fun noteListToEntityList(notes: List<Note>): List<NoteNetworkEntity>{
-        val entities: ArrayList<NoteNetworkEntity> = ArrayList()
-        for(note in notes){
-            entities.add(mapToEntity(note))
-        }
-        return entities
     }
 
     override fun mapFromEntity(entity: NoteNetworkEntity): Note {
@@ -55,8 +43,6 @@ constructor(
             created_at = dateUtil.convertStringDateToFirebaseTimestamp(domainModel.created_at)
         )
     }
-
-
 }
 
 

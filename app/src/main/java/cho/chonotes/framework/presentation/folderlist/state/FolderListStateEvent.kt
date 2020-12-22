@@ -4,7 +4,6 @@ import cho.chonotes.business.domain.model.Folder
 import cho.chonotes.business.domain.state.StateEvent
 import cho.chonotes.business.domain.state.StateMessage
 
-
 sealed class FolderListStateEvent: StateEvent {
 
     class RenameFolderEvent(
@@ -51,7 +50,6 @@ sealed class FolderListStateEvent: StateEvent {
         override fun shouldDisplayProgressBar() = true
     }
 
-    // for testing
     class InsertMultipleFoldersEvent(
         val numFolders: Int
     ): FolderListStateEvent() {

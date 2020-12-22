@@ -11,8 +11,6 @@ import cho.chonotes.business.interactors.folderlist.DeleteMultipleFolders.Compan
 import cho.chonotes.business.interactors.folderlist.FolderListInteractors
 import cho.chonotes.framework.datasource.cache.database.FOLDER_FILTER_DATE_CREATED
 import cho.chonotes.framework.datasource.cache.database.FOLDER_ORDER_DESC
-import cho.chonotes.framework.datasource.cache.database.FolderDao
-import cho.chonotes.framework.datasource.cache.model.FolderWithNotesCacheEntity
 import cho.chonotes.framework.datasource.preferences.PreferenceKeys.Companion.FOLDER_FILTER
 import cho.chonotes.framework.datasource.preferences.PreferenceKeys.Companion.FOLDER_ORDER
 import cho.chonotes.framework.presentation.common.BaseViewModel
@@ -20,8 +18,7 @@ import cho.chonotes.framework.presentation.folderlist.state.FolderListInteractio
 import cho.chonotes.framework.presentation.folderlist.state.FolderListStateEvent.*
 import cho.chonotes.framework.presentation.folderlist.state.FolderListToolbarState
 import cho.chonotes.framework.presentation.folderlist.state.FolderListViewState
-import cho.chonotes.framework.presentation.folderlist.state.FolderListViewState.*
-import cho.chonotes.util.printLogD
+import cho.chonotes.framework.presentation.folderlist.state.FolderListViewState.FolderPendingDelete
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -31,9 +28,8 @@ import javax.inject.Singleton
 
 const val DELETE_PENDING_ERROR = "There is already a pending delete operation."
 const val FOLDER_PENDING_DELETE_BUNDLE_KEY = "pending_delete"
-const val FOLDER_LIST_SELECTED_NOTES_BUNDLE_KEY = "selectedNote" // added
-
-const val DELETE_FOLDER_AND_NOTES = "DELETE FOLDER AND NOTES" // added
+const val FOLDER_LIST_SELECTED_NOTES_BUNDLE_KEY = "selectedNote"
+const val DELETE_FOLDER_AND_NOTES = "DELETE FOLDER AND NOTES"
 
 @ExperimentalCoroutinesApi
 @FlowPreview
@@ -41,15 +37,13 @@ const val DELETE_FOLDER_AND_NOTES = "DELETE FOLDER AND NOTES" // added
 class FolderListViewModel
 @Inject
 constructor(
-    private val folderDao: FolderDao,
     private val folderInteractors: FolderListInteractors,
     private val folderFactory: FolderFactory,
     private val editor: SharedPreferences.Editor,
     sharedPreferences: SharedPreferences
 ): BaseViewModel<FolderListViewState>(){
 
-//    val foldersWithNotes = folderDao.getAllFoldersWithNotes()
-    val uid = FirebaseAuth.getInstance().currentUser!!.uid
+    val uid = FirebaseAuth.getInstance().currentUser?.uid ?: ""
 
     val folderListInteractionManager =
         FolderListInteractionManager()
@@ -75,24 +69,8 @@ constructor(
     override fun handleNewData(data: FolderListViewState) {
 
         data.let { viewState ->
-            viewState.folderList?.let { _ ->
-//                Log.d("called", "folderList: $folderList")
-//                setFolderListData(folderList)
-            }
 
             viewState.folderWithNotesCacheEntityList?.let { folderWithNotesList ->
-                Log.d("called", "folderWithNotesList: $folderWithNotesList")
-//                val folderCacheEntity = folderWithNotesList[0].folderCacheEntity
-//                val notesList = folderWithNotesList[1].notes
-//                Log.d("called", "notesList: $notesList")
-//                var folderList = ArrayList<Folder>()
-//
-//                for (i in 0..folderWithNotesList.size) {
-//                    val folderName = folderWithNotesList[i].folderCacheEntity.folder_name
-//                    Log.d("called", "folderName: $folderName")
-//                }
-
-//                setFolderWithNotesListData(folderWithNotesList)
                 if (folderWithNotesList.isEmpty()){
                     setStateEvent(InsertDefaultFolderEvent())
                 }
@@ -105,7 +83,6 @@ constructor(
 
             viewState.newFolder?.let { folder ->
                 Log.d("folder", "folder: $folder")
-                //setFolder(folder)
             }
 
             viewState.folderPendingDelete?.let { restoredFolder ->
@@ -139,6 +116,7 @@ constructor(
             }
 
             is InsertNewFolderEvent -> {
+                Log.d("choCalled","InsertNewFolderEvent")
                 folderInteractors.insertNewFolder.insertNewFolder(
                     folder_name = stateEvent.folder_name,
                     uid = uid,
@@ -261,26 +239,6 @@ constructor(
         }
     }
 
-//    fun deleteFoldersAndNotes(){
-//        if(getSelectedFolders().size > 0){
-//            setStateEvent(DeleteMultipleFoldersAndNotesEvent(getSelectedFolders()))
-//            removeSelectedFoldersFromList()
-//        }
-//        else{
-//            setStateEvent(
-//                CreateStateMessageEvent(
-//                    stateMessage = StateMessage(
-//                        response = Response(
-//                            message = DELETE_FOLDERS_YOU_MUST_SELECT,
-//                            uiComponentType = UIComponentType.Toast(),
-//                            messageType = MessageType.Info()
-//                        )
-//                    )
-//                )
-//            )
-//        }
-//    }
-
     fun getSelectedFolders() = folderListInteractionManager.getSelectedFolders()
 
     fun setToolbarState(state: FolderListToolbarState)
@@ -325,7 +283,6 @@ constructor(
         setViewState(update)
     }
 
-    // can be selected from Recyclerview or created new from dialog
     fun setFolder(folder: Folder?){
         val update = getCurrentViewStateOrNew()
         update.newFolder = folder
@@ -338,9 +295,6 @@ constructor(
         setViewState(update)
     }
 
-
-    // if a folder is deleted and then restored, the id will be incorrect.
-    // So need to reset it here.
     private fun setRestoredFolderId(restoredFolder: Folder){
         val update = getCurrentViewStateOrNew()
         update.folderList?.let { folderList ->
@@ -398,7 +352,6 @@ constructor(
     }
 
     fun undoDelete(){
-        // replace folder in viewstate
         val update = getCurrentViewStateOrNew()
         update.folderPendingDelete?.let { folder ->
             if(folder.listPosition != null && folder.folder != null){
@@ -463,45 +416,26 @@ constructor(
         setViewState(update)
     }
 
-    // for debugging
-    fun getActiveJobs() = dataChannelManager.getActiveJobs()
-
     fun isQueryExhausted(): Boolean{
-        printLogD("FolderListViewModel",
-            "is query exhasuted? ${getCurrentViewStateOrNew().isQueryExhausted?: true}")
         return getCurrentViewStateOrNew().isQueryExhausted?: true
     }
 
     fun clearList(){
-        printLogD("ListViewModel", "clearList")
         val update = getCurrentViewStateOrNew()
         update.folderList = ArrayList()
         setViewState(update)
     }
 
-    // workaround for tests
-    // can't submit an empty string because SearchViews SUCK
-    fun clearSearchQuery(){
-        setQuery("")
-        clearList()
-        loadFirstPage()
-    }
-
     fun loadFirstPage() {
         setQueryExhausted(false)
         resetPage()
-//        setStateEvent(SearchFoldersEvent())
         setStateEvent(SearchFoldersWithNotesEvent())
-        printLogD("FolderListViewModel",
-            "loadFirstPage: ${getCurrentViewStateOrNew().searchQuery}")
     }
 
     fun nextPage(){
         if(!isQueryExhausted()){
-            printLogD("FolderListViewModel", "attempting to load next page...")
             clearLayoutManagerState()
             incrementPageNumber()
-//            setStateEvent(SearchFoldersEvent())
             setStateEvent(SearchFoldersWithNotesEvent())
         }
     }
@@ -519,7 +453,6 @@ constructor(
 
     fun refreshSearchQuery(){
         setQueryExhausted(false)
-//        setStateEvent(SearchFoldersEvent(false))
         setStateEvent(SearchFoldersWithNotesEvent(false))
     }
 
@@ -573,6 +506,4 @@ constructor(
         editor.putString(FOLDER_ORDER, order)
         editor.apply()
     }
-
-
 }

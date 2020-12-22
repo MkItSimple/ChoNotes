@@ -4,19 +4,13 @@ import cho.chonotes.business.data.cache.CacheResponseHandler
 import cho.chonotes.business.data.cache.abstraction.FolderCacheDataSource
 import cho.chonotes.business.data.network.ApiResponseHandler
 import cho.chonotes.business.data.network.abstraction.FolderNetworkDataSource
-import cho.chonotes.business.domain.model.Folder
-import cho.chonotes.business.domain.state.DataState
 import cho.chonotes.business.data.util.safeApiCall
 import cho.chonotes.business.data.util.safeCacheCall
+import cho.chonotes.business.domain.model.Folder
+import cho.chonotes.business.domain.state.DataState
 import cho.chonotes.util.printLogD
-import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers.IO
 
-/*
-    Search firestore for all folders in the "deleted" node.
-    It will then search the cache for folders matching those deleted folders.
-    If a match is found, it is deleted from the cache.
- */
 class SyncDeletedFolders(
     private val folderCacheDataSource: FolderCacheDataSource,
     private val folderNetworkDataSource: FolderNetworkDataSource
@@ -60,10 +54,7 @@ class SyncDeletedFolders(
                 )
             }
         }.getResult()
-
     }
-
-
 }
 
 

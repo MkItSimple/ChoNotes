@@ -15,4 +15,11 @@ sealed class FolderListToolbarState {
             return "SearchViewState"
         }
     }
+
+    class SelectFolderState: FolderListToolbarState(){
+
+        override fun toString(): String {
+            return "SelectFolderState"
+        }
+    }
 }

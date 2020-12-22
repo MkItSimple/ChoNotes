@@ -32,7 +32,6 @@ constructor(
         uid: String
     ): Folder {
         return Folder(
-            //id = UUID.randomUUID().toString(),
             folder_id = uid,
             folder_name = "notes",
             notes_count = 0,
@@ -41,20 +40,5 @@ constructor(
             updated_at = dateUtil.getCurrentTimestamp()
         )
     }
-
-//    fun createFolderList(numFolders: Int): List<Folder> {
-//        val list: ArrayList<Folder> = ArrayList()
-//        for(i in 0 until numFolders){ // exclusive on upper bound
-//            list.add(
-//                createSingleFolder(
-//                    id = UUID.randomUUID().toString(),
-//                    folder_name = UUID.randomUUID().toString(),
-//                    notes_count = 0
-//                )
-//            )
-//        }
-//        return list
-//    }
-
 
 }

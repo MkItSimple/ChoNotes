@@ -6,7 +6,6 @@ import cho.chonotes.business.domain.util.DateUtil
 import cho.chonotes.framework.presentation.folderlist.FolderListFragment
 import cho.chonotes.framework.presentation.notedetail.NoteDetailFragment
 import cho.chonotes.framework.presentation.notelist.NoteListFragment
-import cho.chonotes.framework.presentation.selectfolder.SelectFolderFragment
 import cho.chonotes.framework.presentation.splash.SplashFragment
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -24,13 +23,9 @@ constructor(
     override fun instantiate(classLoader: ClassLoader, className: String) =
 
         when(className){
-            SelectFolderFragment::class.java.name -> {
-                val fragment = SelectFolderFragment(viewModelFactory, dateUtil)
-                fragment
-            }
 
             FolderListFragment::class.java.name -> {
-                val fragment = FolderListFragment(viewModelFactory, dateUtil)
+                val fragment = FolderListFragment(viewModelFactory)
                 fragment
             }
 

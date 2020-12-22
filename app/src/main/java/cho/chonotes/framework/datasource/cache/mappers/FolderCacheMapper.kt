@@ -1,19 +1,13 @@
 package cho.chonotes.framework.datasource.cache.mappers
 
 import cho.chonotes.business.domain.model.Folder
-import cho.chonotes.business.domain.util.DateUtil
 import cho.chonotes.business.domain.util.EntityMapper
 import cho.chonotes.framework.datasource.cache.model.FolderCacheEntity
 import javax.inject.Inject
 
-/**
- * Maps Folder to FolderCacheEntity or FolderCacheEntity to Folder.
- */
 class FolderCacheMapper
 @Inject
-constructor(
-    private val dateUtil: DateUtil
-): EntityMapper<FolderCacheEntity, Folder>
+constructor(): EntityMapper<FolderCacheEntity, Folder>
 {
 
     fun entityListToFolderList(entities: List<FolderCacheEntity>): List<Folder>{

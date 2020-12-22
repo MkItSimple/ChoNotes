@@ -8,7 +8,6 @@ import cho.chonotes.business.domain.model.NoteFactory
 import cho.chonotes.business.interactors.folderlist.FolderListInteractors
 import cho.chonotes.business.interactors.notedetail.NoteDetailInteractors
 import cho.chonotes.business.interactors.notelist.NoteListInteractors
-import cho.chonotes.framework.datasource.cache.database.FolderDao
 import cho.chonotes.framework.presentation.folderlist.FolderListViewModel
 import cho.chonotes.framework.presentation.notedetail.NoteDetailViewModel
 import cho.chonotes.framework.presentation.notelist.NoteListViewModel
@@ -19,7 +18,6 @@ import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject
 import javax.inject.Singleton
 
-
 @Suppress("UNCHECKED_CAST")
 @FlowPreview
 @ExperimentalCoroutinesApi
@@ -27,11 +25,8 @@ import javax.inject.Singleton
 class NoteViewModelFactory
 @Inject
 constructor(
-    private val folderDao: FolderDao,
     private val folderListInteractors: FolderListInteractors,
-//    private val folderNetworkSyncManager: NoteNetworkSyncManager,
     private val folderFactory: FolderFactory,
-
     private val noteListInteractors: NoteListInteractors,
     private val noteDetailInteractors: NoteDetailInteractors,
     private val noteNetworkSyncManager: NoteNetworkSyncManager,
@@ -45,7 +40,6 @@ constructor(
 
             FolderListViewModel::class.java -> {
                 FolderListViewModel(
-                    folderDao = folderDao,
                     folderInteractors = folderListInteractors,
                     folderFactory = folderFactory,
                     editor = editor,

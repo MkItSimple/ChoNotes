@@ -1,19 +1,17 @@
 package cho.chonotes.business.interactors.folderlist
 
 import cho.chonotes.business.data.cache.CacheResponseHandler
-import cho.chonotes.business.domain.model.FolderFactory
-import cho.chonotes.business.domain.state.*
-import cho.chonotes.business.data.util.safeApiCall
-import cho.chonotes.business.data.util.safeCacheCall
 import cho.chonotes.business.data.cache.abstraction.FolderCacheDataSource
 import cho.chonotes.business.data.network.abstraction.FolderNetworkDataSource
+import cho.chonotes.business.data.util.safeApiCall
+import cho.chonotes.business.data.util.safeCacheCall
 import cho.chonotes.business.domain.model.Folder
+import cho.chonotes.business.domain.model.FolderFactory
+import cho.chonotes.business.domain.state.*
 import cho.chonotes.framework.presentation.folderlist.state.FolderListViewState
-import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import java.util.*
 
 class InsertDefaultFolder(
     private val folderCacheDataSource: FolderCacheDataSource,

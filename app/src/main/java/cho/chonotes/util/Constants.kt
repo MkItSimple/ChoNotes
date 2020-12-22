@@ -1,7 +1,6 @@
 package cho.chonotes.util
 
 object Constants {
-
-    const val TAG = "AppDebug" // Tag for logs
-    const val DEBUG = true // enable logging
+    const val TAG = "AppDebug"
+    const val DEBUG = true
 }

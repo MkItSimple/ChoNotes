@@ -1,20 +1,19 @@
 package cho.chonotes.framework.presentation.notelist
 
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.RecyclerView
 import cho.chonotes.R
 import cho.chonotes.business.domain.model.Note
 import cho.chonotes.business.domain.util.DateUtil
 import cho.chonotes.framework.presentation.common.changeColor
-import cho.chonotes.util.printLogD
 import kotlinx.android.synthetic.main.layout_note_list_item.view.*
-import java.lang.IndexOutOfBoundsException
-
 
 class NoteListAdapter(
     private val interaction: Interaction? = null,
@@ -67,11 +66,8 @@ class NoteListAdapter(
 
     fun submitList(list: List<Note>) {
         val commitCallback = Runnable {
-            // if process died must restore list position
-            // very annoying
             interaction?.restoreListPosition()
         }
-        printLogD("listadapter", "size: ${list.size}")
         differ.submitList(list, commitCallback)
     }
 
@@ -94,7 +90,6 @@ class NoteListAdapter(
     ) : RecyclerView.ViewHolder(itemView)
     {
 
-
         private val COLOR_GREY = R.color.blue_lighten
         private val COLOR_PRIMARY = R.color.colorPrimary
         private lateinit var note: Note
@@ -110,10 +105,7 @@ class NoteListAdapter(
             }
             note = item
             note_title.text = item.title
-//            note_timestamp.text = dateUtil.removeTimeFromDateString(item.updated_at)
-            val uidSub = item.uid.take(8)
-            val folderIdSub = item.note_folder_id.take(8)
-            note_timestamp.text = "$uidSub $folderIdSub"
+            note_timestamp.text = dateUtil.removeTimeFromDateString(item.updated_at)
 
             selectedNotes.observe(lifecycleOwner, Observer { notes ->
 

@@ -2,11 +2,10 @@ package cho.chonotes.business.interactors.notelist
 
 import cho.chonotes.business.data.cache.CacheResponseHandler
 import cho.chonotes.business.data.cache.abstraction.NoteCacheDataSource
+import cho.chonotes.business.data.util.safeCacheCall
 import cho.chonotes.business.domain.model.Note
 import cho.chonotes.business.domain.state.*
-import cho.chonotes.business.data.util.safeCacheCall
 import cho.chonotes.framework.presentation.notelist.state.NoteListViewState
-import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -14,8 +13,6 @@ import kotlinx.coroutines.flow.flow
 class SearchNotes(
     private val noteCacheDataSource: NoteCacheDataSource
 ){
-
-    private val currentUser = FirebaseAuth.getInstance().currentUser
 
     fun searchNotes(
         uid: String,
@@ -73,8 +70,6 @@ class SearchNotes(
     companion object{
         val SEARCH_NOTES_SUCCESS = "Successfully retrieved list of notes."
         val SEARCH_NOTES_NO_MATCHING_RESULTS = "There are no notes that match that query."
-        val SEARCH_NOTES_FAILED = "Failed to retrieve the list of notes."
-
     }
 }
 

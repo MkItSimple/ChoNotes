@@ -1,5 +1,6 @@
 package cho.chonotes.business.interactors.folderlist
 
+import android.util.Log
 import cho.chonotes.business.data.cache.CacheResponseHandler
 import cho.chonotes.business.domain.model.FolderFactory
 import cho.chonotes.business.domain.state.*
@@ -29,7 +30,6 @@ class InsertNewFolder(
 
         val newFolder = folderFactory.createSingleFolder(
             folder_id = folder_id ?: UUID.randomUUID().toString(),
-//            folder_id = "f2",
             folder_name = folder_name,
             uid = uid,
             notes_count = 0

@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- text size -->
     <dimen name="page_title_size">20sp</dimen>
-    <dimen name="date_list_item_text_size">11sp</dimen>
+    <dimen name="date_list_item_text_size">12sp</dimen>
     <dimen name="title_list_item_text_size">21sp</dimen>
-
 
     <dimen name="toolbar_height">55dp</dimen>
     <dimen name="toolbar_height_tall">120dp</dimen>
-    <!-- toolbar_height_tall - toolbar_height  -->
+
     <dimen name="toolbar_title_offset_height">65dp</dimen>
 
     <dimen name="fab_margin">16dp</dimen>

@@ -54,14 +54,12 @@ import javax.inject.Singleton
 @Module
 object AppModule {
 
-
-    // https://developer.android.com/reference/java/text/SimpleDateFormat.html?hl=pt-br
     @JvmStatic
     @Singleton
     @Provides
     fun provideDateFormat(): SimpleDateFormat {
         val sdf = SimpleDateFormat("yyyy-MM-dd hh:mm:ss a", Locale.ENGLISH)
-        sdf.timeZone = TimeZone.getTimeZone("UTC-7") // match firestore
+        sdf.timeZone = TimeZone.getTimeZone("UTC-7")
         return sdf
     }
 
@@ -102,8 +100,8 @@ object AppModule {
     @JvmStatic
     @Singleton
     @Provides
-    fun provideNoteCacheMapper(dateUtil: DateUtil): CacheMapper {
-        return CacheMapper(dateUtil)
+    fun provideNoteCacheMapper(): CacheMapper {
+        return CacheMapper()
     }
 
     @JvmStatic
@@ -144,12 +142,10 @@ object AppModule {
     @Singleton
     @Provides
     fun provideFirestoreService(
-        firebaseAuth: FirebaseAuth,
         firebaseFirestore: FirebaseFirestore,
         networkMapper: NetworkMapper
     ): NoteFirestoreService {
         return NoteFirestoreServiceImpl(
-            firebaseAuth,
             firebaseFirestore,
             networkMapper
         )
@@ -204,14 +200,11 @@ object AppModule {
     @Provides
     fun provideSyncNotes(
         noteCacheDataSource: NoteCacheDataSource,
-        noteNetworkDataSource: NoteNetworkDataSource,
-        dateUtil: DateUtil
+        noteNetworkDataSource: NoteNetworkDataSource
     ): SyncNotes{
         return SyncNotes(
             noteCacheDataSource,
-            noteNetworkDataSource,
-            dateUtil
-
+            noteNetworkDataSource
         )
     }
 
@@ -245,9 +238,6 @@ object AppModule {
         )
     }
 
-    /**
-    *   Folder Staff
-    * */
     @JvmStatic
     @Singleton
     @Provides
@@ -267,8 +257,8 @@ object AppModule {
     @JvmStatic
     @Singleton
     @Provides
-    fun provideFolderCacheMapper(dateUtil: DateUtil): FolderCacheMapper {
-        return FolderCacheMapper(dateUtil)
+    fun provideFolderCacheMapper(): FolderCacheMapper {
+        return FolderCacheMapper()
     }
 
     @JvmStatic
@@ -303,12 +293,10 @@ object AppModule {
     @Singleton
     @Provides
     fun provideFolderFirestoreService(
-        firebaseAuth: FirebaseAuth,
         firebaseFirestore: FirebaseFirestore,
         networkMapper: FolderNetworkMapper
     ): FolderFirestoreService {
         return FolderFirestoreServiceImpl(
-            firebaseAuth,
             firebaseFirestore,
             networkMapper
         )
@@ -343,7 +331,7 @@ object AppModule {
             SearchFolders(folderCacheDataSource),
             SearchFoldersWithNotes(folderCacheDataSource),
             GetNumFolders(folderCacheDataSource),
-            RestoreDeletedFolder(noteCacheDataSource, folderCacheDataSource, noteNetworkDataSource, folderNetworkDataSource),
+            RestoreDeletedFolder(noteCacheDataSource, folderCacheDataSource, folderNetworkDataSource),
             DeleteMultipleFolders(noteCacheDataSource, folderCacheDataSource, noteNetworkDataSource, folderNetworkDataSource),
             DeleteMultipleFoldersAndNotes(noteCacheDataSource, folderCacheDataSource, noteNetworkDataSource, folderNetworkDataSource),
             InsertMultipleFolders(folderCacheDataSource, folderNetworkDataSource)
@@ -355,14 +343,11 @@ object AppModule {
     @Provides
     fun provideSyncFolders(
         folderCacheDataSource: FolderCacheDataSource,
-        folderNetworkDataSource: FolderNetworkDataSource,
-        dateUtil: DateUtil
+        folderNetworkDataSource: FolderNetworkDataSource
     ): SyncFolders{
         return SyncFolders(
             folderCacheDataSource,
-            folderNetworkDataSource,
-            dateUtil
-
+            folderNetworkDataSource
         )
     }
 

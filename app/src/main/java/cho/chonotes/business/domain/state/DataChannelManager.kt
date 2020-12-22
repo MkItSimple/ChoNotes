@@ -34,7 +34,7 @@ abstract class DataChannelManager<ViewState> {
             addStateEvent(stateEvent)
             jobFunction
                 .onEach { dataState ->
-                    dataState?.let { dState ->
+                    dataState?.let { _ ->
                         withContext(Main){
                             dataState.data?.let { data ->
                                 handleNewData(data)
@@ -53,11 +53,11 @@ abstract class DataChannelManager<ViewState> {
     }
 
     private fun canExecuteNewStateEvent(stateEvent: StateEvent): Boolean{
-        // If a job is already active, do not allow duplication
+
         if(isJobAlreadyActive(stateEvent)){
             return false
         }
-        // if a dialog is showing, do not allow new StateEvents
+
         if(!isMessageStackEmpty()){
             return false
         }
@@ -89,7 +89,6 @@ abstract class DataChannelManager<ViewState> {
         }
     }
 
-    // for debugging
     fun getActiveJobs() = stateEventManager.getActiveJobNames()
 
     fun clearActiveStateEventCounter()

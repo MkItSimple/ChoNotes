@@ -27,7 +27,7 @@ class MoveNotes(
             noteCacheDataSource.moveNotes(
                 notes = selectedNotes,
                 newFolderId = folderId,
-                timestamp = null // generate new timestamp
+                timestamp = null
             )
         }
 
@@ -78,7 +78,6 @@ class MoveNotes(
     companion object{
         val UPDATE_NOTES_SUCCESS = "Successfully updated note."
         val UPDATE_NOTES_FAILED = "Failed to update note."
-        val UPDATE_NOTES_FAILED_PK = "Update failed. Note is missing primary key."
     }
 }
 

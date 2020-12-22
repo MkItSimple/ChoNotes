@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.appcompat.widget.Toolbar
@@ -17,9 +16,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.customview.customView
-import com.afollestad.materialdialogs.customview.getCustomView
 import cho.chonotes.R
 import cho.chonotes.business.domain.model.Folder
 import cho.chonotes.business.domain.model.Note
@@ -46,6 +42,9 @@ import cho.chonotes.framework.presentation.notelist.state.NoteListViewState
 import cho.chonotes.util.AndroidTestUtils
 import cho.chonotes.util.TodoCallback
 import cho.chonotes.util.printLogD
+import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.customview.customView
+import com.afollestad.materialdialogs.customview.getCustomView
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.fragment_note_list.*
@@ -82,7 +81,7 @@ constructor(
         arguments?.let { args ->
             args.getParcelable<Note>(NOTE_PENDING_DELETE_BUNDLE_KEY)?.let { note ->
                 viewModel.setNotePendingDelete(note)
-                showUndoSnackbar_deleteNote()
+                showUndoSnackbarDeleteNote()
                 clearArgs()
             }
         }
@@ -132,18 +131,12 @@ constructor(
     }
 
     private fun getSelectedFolderFromPreviousFragment(){
-//        Log.d("folderSelected", "folderSelected")
         arguments?.let { args ->
-            // From what fragment ?
-            // Selected Folder ?
-            // Selected Notes ?
 
             (args.getString(NOTE_LIST_PREVIOUS_FRAGMENT_BUNDLE_KEY))?.let { previousFragmentName ->
                 (args.getParcelable(NOTE_LIST_SELECTED_FOLDER_BUNDLE_KEY) as Folder?)?.let { selectedFolder ->
 
                     if (previousFragmentName == "FolderListFragment") {
-                        // This is for sorting notes by folder
-                         Log.d("selectedFolderId", "selectedFolderId: ${selectedFolder.folder_id}")
                         viewModel.setSelectedFolderId(selectedFolder.folder_id)
                         startNewSearch()
                     } else {
@@ -166,28 +159,6 @@ constructor(
 
             clearArgs()
 
-//            (args.getParcelable(NOTE_LIST_SELECTED_FOLDER_BUNDLE_KEY) as Folder?)?.let { selectedFolder ->
-//
-//                (args.getParcelableArrayList<Note>(NOTE_LIST_SELECTED_NOTES_BUNDLE_KEY) as List<Note>?)?.let { selectedNotes ->
-//
-//                    selectedFolder.folder_id?.let {
-//                        viewModel.setStateEvent(
-//                            UpdateMultipleNotesEvent(
-//                                selectedNotes = selectedNotes,
-//                                folderId = selectedFolder.folder_id
-//                            )
-//                        )
-//                    }
-//
-//                }
-//            }
-
-
-//            (args.getParcelable(NOTE_LIST_SELECTED_FOLDER_BUNDLE_KEY) as Folder?)?.let { selectedFolder ->
-//                // This is for sorting notes by folder
-//                Log.d("selectedFolderId", "selectedFolderId: ${selectedFolder.folder_id}")
-//                viewModel.setQuery(selectedFolder.folder_id)
-//            }?: onErrorRetrievingFolderFromPreviousFragment()
         }
     }
 
@@ -199,12 +170,9 @@ constructor(
         }
     }
 
-    // Why didn't I use the "SavedStateHandle" here?
-    // It sucks and doesn't work for testing
     override fun onSaveInstanceState(outState: Bundle) {
         val viewState = viewModel.viewState.value
 
-        //clear the list. Don't want to save a large list to bundle.
         viewState?.noteList =  ArrayList()
 
         outState.putParcelable(
@@ -275,17 +243,6 @@ constructor(
             )
             toolbar_content_container.addView(view)
 
-//            val viewBottom = View.inflate(
-//                v.context,
-//                R.layout.layout_multiselection_toolbar_bottom,
-//                null
-//            )
-//            viewBottom.layoutParams = LinearLayout.LayoutParams(
-//                LinearLayout.LayoutParams.MATCH_PARENT,
-//                LinearLayout.LayoutParams.MATCH_PARENT
-//            )
-//            toolbar_content_container_bottom.addView(viewBottom)
-
             setupMultiSelectionToolbar(view)
         }
     }
@@ -299,19 +256,6 @@ constructor(
                 viewModel.setToolbarState(SearchViewState())
             }
 
-//        parentView
-//            .findViewById<ImageView>(R.id.action_delete_notes)
-//            .setOnClickListener {
-//                deleteNotes()
-//            }
-
-//        // added
-//        parentViewBottom
-//            .findViewById<ImageView>(R.id.move_imageview)
-//            .setOnClickListener {
-//                val selectedNotes = viewModel.noteListInteractionManager.selectedNotes
-//                navigateToSelectFolderListFragment(selectedNotes)
-//            }
         action_move_notes.setOnClickListener {
             val selectedNotes = viewModel.noteListInteractionManager.selectedNotes
             navigateToSelectFolderListFragment(selectedNotes)
@@ -323,12 +267,19 @@ constructor(
         }
     }
 
-    // added
     private fun navigateToSelectFolderListFragment(selectedNotes: LiveData<ArrayList<Note>>) {
+//        selectedNotes.value?.let {
+//            val bundle = bundleOf(FOLDER_LIST_SELECTED_NOTES_BUNDLE_KEY to it)
+//            findNavController().navigate(
+//                R.id.action_noteListFragment_to_selectFolderFragment,
+//                bundle
+//            )
+//        }
+
         selectedNotes.value?.let {
             val bundle = bundleOf(FOLDER_LIST_SELECTED_NOTES_BUNDLE_KEY to it)
             findNavController().navigate(
-                R.id.action_noteListFragment_to_selectFolderFragment,
+                R.id.action_noteListFragment_to_folderListFragment,
                 bundle
             )
         }
@@ -408,7 +359,6 @@ constructor(
                     listAdapter?.notifyDataSetChanged()
                 }
 
-                // a note been inserted or selected
                 viewState.newNote?.let { newNote ->
                     navigateToDetailFragment(newNote)
                 }
@@ -424,7 +374,7 @@ constructor(
         viewModel.stateMessage.observe(viewLifecycleOwner, Observer { stateMessage ->
             stateMessage?.let { message ->
                 if(message.response.message?.equals(DELETE_NOTE_SUCCESS) == true){
-                    showUndoSnackbar_deleteNote()
+                    showUndoSnackbarDeleteNote()
                 }
                 else{
                     uiController.onResponseReceived(
@@ -440,7 +390,7 @@ constructor(
         })
     }
 
-    private fun showUndoSnackbar_deleteNote(){
+    private fun showUndoSnackbarDeleteNote(){
         uiController.onResponseReceived(
             response = Response(
                 message = DELETE_NOTE_PENDING,
@@ -452,7 +402,6 @@ constructor(
                     },
                     onDismissCallback = object: TodoCallback {
                         override fun execute() {
-                            // if the note is not restored, clear pending note
                             viewModel.setNotePendingDelete(null)
                         }
                     }
@@ -467,12 +416,11 @@ constructor(
         )
     }
 
-    // for debugging
     private fun printActiveJobs(){
 
         for((index, job) in viewModel.getActiveJobs().withIndex()){
             printLogD("NoteList",
-                "${index}: ${job}")
+                "${index}: $job")
         }
     }
 
@@ -511,7 +459,6 @@ constructor(
         }
         else{
             viewModel.setNote(item)
-            Log.d("action", "onItemSelected")
         }
     }
 
@@ -540,8 +487,8 @@ constructor(
 
     override fun onDestroyView() {
         super.onDestroyView()
-        listAdapter = null // can leak memory
-        itemTouchHelper = null // can leak memory
+        listAdapter = null
+        itemTouchHelper = null
     }
 
     override fun isNoteSelected(note: Note): Boolean {
@@ -571,9 +518,7 @@ constructor(
                                     viewModel.deleteNotes()
                                 }
 
-                                override fun cancel() {
-                                    // do nothing
-                                }
+                                override fun cancel() {}
                             }
                         ),
                         messageType = MessageType.Info()
@@ -599,9 +544,7 @@ constructor(
                                     startActivity(intent)
                                 }
 
-                                override fun cancel() {
-                                    // do nothing
-                                }
+                                override fun cancel() {}
                             }
                         ),
                         messageType = MessageType.Info()
@@ -619,69 +562,52 @@ constructor(
             .findViewById<Toolbar>(R.id.searchview_toolbar)
 
         searchViewToolbar?.let { toolbar ->
-//            val searchView = toolbar.findViewById<SearchView>(R.id.search_view)
+
             val searchText = toolbar.findViewById<EditText>(R.id.searchText)
 
-            searchText.addTextChangedListener(object  : TextWatcher {
-                override fun afterTextChanged(p0: Editable?) {}
-                override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-                override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                    val query = searchText.getText().toString().trim()
-                    Log.d("action", "onTextChanged $searchText")
-                    viewModel.setQuery(query)
+            // can't use QueryTextListener in production b/c can't submit an empty string
+            when{
+                androidTestUtils.isTest() -> {
+                    searchText.addTextChangedListener(object  : TextWatcher {
+                        override fun afterTextChanged(p0: Editable?) {}
+                        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+                        override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                            val query = searchText.text.toString().trim()
+                            viewModel.setQuery(query)
                             startNewSearch()
+                        }
+                    })
                 }
-            })
 
-//            searchView.queryHint = "Search folder . . ."
-//            searchView.isClickable=true
-//            searchView.isIconified=true
-//
-//            searchView.setOnClickListener {
-////                Log.d("action","search view clicked")
-//                searchView.onActionViewExpanded()
-//            }
-//
-//            val searchPlate: SearchView.SearchAutoComplete?
-//                    = searchView.findViewById(androidx.appcompat.R.id.search_src_text)
-//
-//            // can't use QueryTextListener in production b/c can't submit an empty string
-//            when{
-//                androidTestUtils.isTest() -> {
-//                    searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener{
-//                        override fun onQueryTextSubmit(query: String?): Boolean {
-//                            viewModel.setQuery(query)
+                else ->{
+                    searchText.addTextChangedListener(object  : TextWatcher {
+                        override fun afterTextChanged(p0: Editable?) {}
+                        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+                        override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                            val query = searchText.text.toString().trim()
+                            viewModel.setQuery(query)
+                            startNewSearch()
+                        }
+                    })
+                }
+            }
+
+//            searchText.addTextChangedListener(object  : TextWatcher {
+//                override fun afterTextChanged(p0: Editable?) {}
+//                override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+//                override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+//                    val query = searchText.text.toString().trim()
+//                    viewModel.setQuery(query)
 //                            startNewSearch()
-//                            return true
-//                        }
-//
-//                        override fun onQueryTextChange(newText: String?): Boolean {
-//                            return true
-//                        }
-//
-//                    })
 //                }
-//
-//                else ->{
-//                    searchPlate?.setOnEditorActionListener { v, actionId, _ ->
-//                        if (actionId == EditorInfo.IME_ACTION_UNSPECIFIED
-//                            || actionId == EditorInfo.IME_ACTION_SEARCH ) {
-//                            val searchQuery = v.text.toString()
-//                            viewModel.setQuery(searchQuery)
-//                            startNewSearch()
-//                        }
-//                        true
-//                    }
-//                }
-//            }
+//            })
+
         }
     }
 
     private fun setupFAB(){
         add_new_note_fab.setOnClickListener {
             val toFolder = if (viewModel.getSelectedFolderId().isNotBlank()) viewModel.getSelectedFolderId() else NOTES
-
-            Log.d("getSelectedFolder", "toFolder: $toFolder")
 
             uiController.displayInputCaptureDialog(
                 getString(cho.chonotes.R.string.text_enter_a_title),
@@ -702,7 +628,6 @@ constructor(
     }
 
     private fun startNewSearch(){
-        printLogD("DCM", "start new search")
         viewModel.clearList()
         viewModel.loadFirstPage()
     }

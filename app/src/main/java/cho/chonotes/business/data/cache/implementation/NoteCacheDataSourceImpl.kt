@@ -45,8 +45,7 @@ constructor(
             timestamp
         )
     }
-
-    // added
+    
     override suspend fun moveNotes(
         notes: List<Note>,
         newFolderId: String?,

@@ -7,13 +7,12 @@
     android:orientation="vertical"
     android:padding="20dp">
 
-
     <TextView
         android:id="@+id/delete_description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingTop="20dp"
-        android:text="If you delete the  folder only. the notes  in it will be  moved to the default notes folder."
+        android:text="@string/if_you_delete_the_folder_only_the_notes_in_it_will_be_moved_to_the_default_notes_folder"
         android:textColor="#000"
         android:textSize="16sp"
         android:fontFamily="@font/montserrat_regular"
@@ -27,7 +26,7 @@
         android:id="@+id/delete_folder_and_notes"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Delete folder and notes"
+        android:text="@string/delete_folder_and_notes"
         android:textAlignment="center"
         android:textColor="#000"
         android:textSize="16sp"
@@ -45,7 +44,7 @@
         android:id="@+id/delete_folder"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Delete folder only"
+        android:text="@string/delete_folder_only"
         android:textAlignment="center"
         android:textColor="#000"
         android:textSize="16sp"
@@ -63,7 +62,7 @@
         android:id="@+id/delete_cancel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Cancel"
+        android:text="@string/cancel"
         android:textAlignment="center"
         android:textColor="#000"
         android:textSize="16sp"

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     app:startDestination="@id/splashFragment"
     >
 
@@ -41,15 +40,6 @@
             app:exitAnim="@anim/slide_out_left"
             app:popUpTo="@id/folderListFragment"
             app:popUpToInclusive="true"/>
-        <action
-            android:id="@+id/action_noteListFragment_to_selectFolderFragment"
-            app:destination="@id/selectFolderFragment"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popUpTo="@id/folderListFragment"
-            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment
@@ -80,21 +70,5 @@
             app:enterAnim="@anim/slide_in_left"
             app:exitAnim="@anim/slide_out_right"/>
     </fragment>
-    <fragment
-        android:id="@+id/selectFolderFragment"
-        android:name="cho.chonotes.framework.presentation.selectfolder.SelectFolderFragment"
-        android:label="fragment_select_folder"
-        tools:layout="@layout/fragment_select_folder" >
-        <action
-            android:id="@+id/action_selectFolderFragment_to_noteListFragment"
-            app:destination="@id/noteListFragment"
-            app:popEnterAnim="@anim/slide_in_right"
-            app:popExitAnim="@anim/slide_out_left"
-            app:enterAnim="@anim/slide_in_left"
-            app:exitAnim="@anim/slide_out_right"
-            app:popUpTo="@id/noteListFragment"
-            app:popUpToInclusive="true"/>
-    </fragment>
-
 
 </navigation>

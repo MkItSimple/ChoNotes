@@ -6,7 +6,6 @@ import cho.chonotes.framework.datasource.network.abstraction.NoteFirestoreServic
 import javax.inject.Inject
 import javax.inject.Singleton
 
-
 @Singleton
 class NoteNetworkDataSourceImpl
 @Inject
@@ -18,12 +17,7 @@ constructor(
         return firestoreService.insertOrUpdateNote(note)
     }
 
-//    override suspend fun deleteNote(primaryKey: String, folderId: String) {
-//        return firestoreService.deleteNote(primaryKey, folderId)
-//    }
-
     override suspend fun deleteNote(note: Note) {
-//        return firestoreService.deleteNote(primaryKey)
         return firestoreService.deleteNote(note)
     }
 
@@ -55,13 +49,12 @@ constructor(
         return firestoreService.getAllNotes()
     }
 
-    // for testing
-    override suspend fun insertOrUpdateNotes(noteList: List<Note>) {
-        return firestoreService.insertOrUpdateNotes(noteList)
+    override suspend fun insertOrUpdateNotes(nl: List<Note>) {
+        return firestoreService.insertOrUpdateNotes(nl)
     }
 
-    override suspend fun moveNotes(noteList: List<Note>, folderId: String) {
-        return firestoreService.moveNotes(noteList, folderId)
+    override suspend fun moveNotes(l: List<Note>, folderId: String) {
+        return firestoreService.moveNotes(l, folderId)
     }
 }
 

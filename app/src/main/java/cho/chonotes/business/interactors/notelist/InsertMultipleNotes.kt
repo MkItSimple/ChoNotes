@@ -15,7 +15,6 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
-// For testing
 class InsertMultipleNotes(
     private val noteCacheDataSource: NoteCacheDataSource,
     private val noteNetworkDataSource: NoteNetworkDataSource

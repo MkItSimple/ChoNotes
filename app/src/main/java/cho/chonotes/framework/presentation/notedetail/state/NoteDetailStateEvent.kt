@@ -4,7 +4,6 @@ import cho.chonotes.business.domain.model.Note
 import cho.chonotes.business.domain.state.StateEvent
 import cho.chonotes.business.domain.state.StateMessage
 
-
 sealed class NoteDetailStateEvent: StateEvent {
 
 

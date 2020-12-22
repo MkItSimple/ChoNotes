@@ -32,8 +32,6 @@
         android:maxLines="1"
         android:ellipsize="end"/>
 
-
-
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -46,8 +44,6 @@
         android:layout_marginBottom="@dimen/default_view_margin"
         android:layout_marginEnd="@dimen/default_view_margin"
         android:gravity="end"
-        android:textColor="@color/default_grey"/>
-
-
+        android:textColor="@color/black"/>
 
 </LinearLayout>

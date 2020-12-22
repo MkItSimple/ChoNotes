@@ -71,12 +71,10 @@ class RestoreDeletedNote(
     private suspend fun updateNetwork(response: String?, note: Note) {
         if(response.equals(RESTORE_NOTE_SUCCESS)){
 
-            // insert into "notes" node
             safeApiCall(IO){
                 noteNetworkDataSource.insertOrUpdateNote(note)
             }
 
-            // remove from "deleted" node
             safeApiCall(IO){
                 noteNetworkDataSource.deleteDeletedNote(note)
             }
@@ -85,8 +83,8 @@ class RestoreDeletedNote(
 
     companion object{
 
-        val RESTORE_NOTE_SUCCESS = "Successfully restored the deleted note."
-        val RESTORE_NOTE_FAILED = "Failed to restore the deleted note."
+        const val RESTORE_NOTE_SUCCESS = "Successfully restored the deleted note."
+        const val RESTORE_NOTE_FAILED = "Failed to restore the deleted note."
 
     }
 }

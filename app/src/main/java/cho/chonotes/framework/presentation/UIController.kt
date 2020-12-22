@@ -4,7 +4,6 @@ import cho.chonotes.business.domain.state.DialogInputCaptureCallback
 import cho.chonotes.business.domain.state.Response
 import cho.chonotes.business.domain.state.StateMessageCallback
 
-
 interface UIController {
 
     fun displayProgressBar(isDisplayed: Boolean)

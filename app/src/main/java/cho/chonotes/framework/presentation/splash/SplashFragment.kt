@@ -25,7 +25,7 @@ constructor(
     private val viewModelFactory: ViewModelProvider.Factory
 ): BaseNoteFragment(R.layout.fragment_splash) {
 
-    val viewModel: SplashViewModel by viewModels {
+    private val viewModel: SplashViewModel by viewModels {
         viewModelFactory
     }
 
@@ -46,9 +46,7 @@ constructor(
     }
 
     private fun subscribeObservers(){
-//        navNoteListFragment()
         viewModel.hasSyncBeenExecuted().observe(viewLifecycleOwner, Observer { hasSyncBeenExecuted ->
-
             if(hasSyncBeenExecuted){
                 navNoteListFragment()
             }
@@ -62,7 +60,6 @@ constructor(
     override fun inject() {
         getAppComponent().inject(this)
     }
-
 }
 
 

@@ -6,9 +6,6 @@ import cho.chonotes.business.domain.util.EntityMapper
 import cho.chonotes.framework.datasource.network.model.FolderNetworkEntity
 import javax.inject.Inject
 
-/**
- * Maps Folder to FolderNetworkEntity or FolderNetworkEntity to Folder.
- */
 class FolderNetworkMapper
 @Inject
 constructor(
@@ -22,14 +19,6 @@ constructor(
             list.add(mapFromEntity(entity))
         }
         return list
-    }
-
-    fun folderListToEntityList(folders: List<Folder>): List<FolderNetworkEntity>{
-        val entities: ArrayList<FolderNetworkEntity> = ArrayList()
-        for(folder in folders){
-            entities.add(mapToEntity(folder))
-        }
-        return entities
     }
 
     override fun mapFromEntity(entity: FolderNetworkEntity): Folder {
