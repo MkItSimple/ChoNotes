@@ -162,7 +162,9 @@ class NoteListFragmentTests: BaseTest() {
 
         // make sure the query worked
         val expectedSearchResults = dao.searchNotesOrderByDateASC(
+            randomNote.uid,
             randomNote.title,
+            randomNote.note_folder_id,
             1,
             NOTE_PAGINATION_PAGE_SIZE
         )
@@ -205,7 +207,7 @@ class NoteListFragmentTests: BaseTest() {
         onView(withId(R.id.action_exit_multiselect_state)).perform(click())
 
         // confirm 'SearchViewState' is active
-        onView(withId(R.id.search_view)).check(matches(isDisplayed()))
+        onView(withId(R.id.searchText)).check(matches(isDisplayed()))
 
         // select a note and confirm navigate function was called
         val selectedPosition = 1

@@ -11,12 +11,10 @@ import cho.chonotes.framework.datasource.cache.database.NoteDao
 import cho.chonotes.framework.datasource.cache.implementation.NoteDaoServiceImpl
 import cho.chonotes.framework.datasource.cache.mappers.CacheMapper
 import cho.chonotes.framework.datasource.data.NoteDataFactory
-import cho.chonotes.util.EspressoIdlingResourceRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.runBlocking
 import org.junit.FixMethodOrder
-import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.MethodSorters
@@ -92,7 +90,7 @@ class NoteDaoServiceTests: BaseTest(){
             .inject(this)
     }
 
-    fun insertTestData() = runBlocking{
+    private fun insertTestData() = runBlocking{
         val entityList = cacheMapper.noteListToEntityList(
             noteDataFactory.produceListOfNotes()
         )
@@ -160,11 +158,13 @@ class NoteDaoServiceTests: BaseTest(){
         repeat(50){
             val randomIndex = Random.nextInt(0, noteList.size - 1)
             val result = noteDaoService.searchNotesOrderByTitleASC(
-                query = noteList.get(randomIndex).title,
+                uid = noteList[randomIndex].uid,
+                query = noteList[randomIndex].title,
+                folderId = noteList[randomIndex].note_folder_id,
                 page = 1,
                 pageSize = 1
             )
-            assertEquals(noteList.get(randomIndex).title, result.get(0).title)
+            assertEquals(noteList[randomIndex].title, result[0].title)
         }
     }
 
@@ -182,7 +182,7 @@ class NoteDaoServiceTests: BaseTest(){
         var notes = noteDaoService.searchNotes()
         assert(notes.contains(newNote))
 
-        noteDaoService.deleteNote(newNote.id)
+        noteDaoService.deleteNote(newNote.note_id)
         notes = noteDaoService.searchNotes()
         assert(!notes.contains(newNote))
     }
@@ -195,22 +195,22 @@ class NoteDaoServiceTests: BaseTest(){
         val notesToDelete: ArrayList<Note> = ArrayList()
 
         // 1st
-        var noteToDelete = noteList.get(Random.nextInt(0, noteList.size - 1) + 1)
+        var noteToDelete = noteList[Random.nextInt(0, noteList.size - 1) + 1]
         noteList.remove(noteToDelete)
         notesToDelete.add(noteToDelete)
 
         // 2nd
-        noteToDelete = noteList.get(Random.nextInt(0, noteList.size - 1) + 1)
+        noteToDelete = noteList[Random.nextInt(0, noteList.size - 1) + 1]
         noteList.remove(noteToDelete)
         notesToDelete.add(noteToDelete)
 
         // 3rd
-        noteToDelete = noteList.get(Random.nextInt(0, noteList.size - 1) + 1)
+        noteToDelete = noteList[Random.nextInt(0, noteList.size - 1) + 1]
         noteList.remove(noteToDelete)
         notesToDelete.add(noteToDelete)
 
         // 4th
-        noteToDelete = noteList.get(Random.nextInt(0, noteList.size - 1) + 1)
+        noteToDelete = noteList[Random.nextInt(0, noteList.size - 1) + 1]
         noteList.remove(noteToDelete)
         notesToDelete.add(noteToDelete)
 
@@ -226,16 +226,18 @@ class NoteDaoServiceTests: BaseTest(){
         val newNote = noteFactory.createSingleNote(
             null,
             "Super cool title",
-            "Some content for the note"
+            "Some content for the note",
+            "folder id"
         )
         noteDaoService.insertNote(newNote)
 
         val newTitle = UUID.randomUUID().toString()
         val newBody = UUID.randomUUID().toString()
         noteDaoService.updateNote(
-            primaryKey = newNote.id,
+            primaryKey = newNote.note_id,
             title = newTitle,
             body = newBody,
+            folder_id = newNote.note_folder_id,
             timestamp = null
         )
 
@@ -243,9 +245,9 @@ class NoteDaoServiceTests: BaseTest(){
 
         var foundNote = false
         for(note in notes){
-            if(note.id.equals(newNote.id)){
+            if(note.note_id == newNote.note_id){
                 foundNote = true
-                assertEquals(newNote.id, note.id)
+                assertEquals(newNote.note_id, note.note_id)
                 assertEquals(newTitle, note.title)
                 assertEquals(newBody, note.body)
                 assert(newNote.updated_at != note.updated_at)
@@ -262,15 +264,17 @@ class NoteDaoServiceTests: BaseTest(){
     @Test
     fun searchNotes_orderByDateASC_confirmOrder() = runBlocking {
         val noteList = noteDaoService.searchNotesOrderByDateASC(
+            uid = "",
             query = "",
+            folderId = "",
             page = 1,
             pageSize = 100
         )
 
         // check that the date gets larger (newer) as iterate down the list
-        var previousNoteDate = noteList.get(0).updated_at
-        for(index in 1..noteList.size - 1){
-            val currentNoteDate = noteList.get(index).updated_at
+        var previousNoteDate = noteList[0].updated_at
+        for(index in 1 until noteList.size){
+            val currentNoteDate = noteList[index].updated_at
             assertTrue { currentNoteDate >= previousNoteDate }
             previousNoteDate = currentNoteDate
         }
@@ -280,15 +284,17 @@ class NoteDaoServiceTests: BaseTest(){
     @Test
     fun searchNotes_orderByDateDESC_confirmOrder() = runBlocking {
         val noteList = noteDaoService.searchNotesOrderByDateDESC(
+            uid = "",
             query = "",
+            folderId = "",
             page = 1,
             pageSize = 100
         )
 
         // check that the date gets larger (newer) as iterate down the list
-        var previous = noteList.get(0).updated_at
-        for(index in 1..noteList.size - 1){
-            val current = noteList.get(index).updated_at
+        var previous = noteList[0].updated_at
+        for(index in 1 until noteList.size){
+            val current = noteList[index].updated_at
             assertTrue { current <= previous }
             previous = current
         }
@@ -297,15 +303,17 @@ class NoteDaoServiceTests: BaseTest(){
     @Test
     fun searchNotes_orderByTitleASC_confirmOrder() = runBlocking {
         val noteList = noteDaoService.searchNotesOrderByTitleASC(
+            uid = "",
             query = "",
+            folderId = "",
             page = 1,
             pageSize = 100
         )
 
         // check that the date gets larger (newer) as iterate down the list
-        var previous = noteList.get(0).title
-        for(index in 1..noteList.size - 1){
-            val current = noteList.get(index).title
+        var previous = noteList[0].title
+        for(index in 1 until noteList.size){
+            val current = noteList[index].title
 
             assertTrue {
                 listOf(previous, current)
@@ -321,15 +329,17 @@ class NoteDaoServiceTests: BaseTest(){
     @Test
     fun searchNotes_orderByTitleDESC_confirmOrder() = runBlocking {
         val noteList = noteDaoService.searchNotesOrderByTitleDESC(
+            uid = "",
             query = "",
+            folderId = "",
             page = 1,
             pageSize = 100
         )
 
         // check that the date gets larger (newer) as iterate down the list
-        var previous = noteList.get(0).title
-        for(index in 1..noteList.size - 1){
-            val current = noteList.get(index).title
+        var previous = noteList[0].title
+        for(index in 1 until noteList.size){
+            val current = noteList[index].title
 
             assertTrue {
                 listOf(previous, current)

@@ -20,6 +20,16 @@ constructor(
         return list
     }
 
+    // for testing . . NoteFirestoreServiceTest
+    fun noteListToEntityList(notes: List<Note>): List<NoteNetworkEntity>{
+        val entities: ArrayList<NoteNetworkEntity> = ArrayList()
+        for(note in notes){
+            entities.add(mapToEntity(note))
+        }
+        return entities
+    }
+
+
     override fun mapFromEntity(entity: NoteNetworkEntity): Note {
         return Note(
             note_id = entity.note_id,

@@ -6,7 +6,6 @@ import cho.chonotes.framework.presentation.TestBaseApplication
 import cho.chonotes.framework.presentation.end_to_end.NotesFeatureTest
 import cho.chonotes.framework.presentation.notedetail.NoteDetailFragmentTests
 import cho.chonotes.framework.presentation.notelist.NoteListFragmentTests
-import cho.chonotes.notes.di.NoteViewModelModule
 import dagger.BindsInstance
 import dagger.Component
 import kotlinx.coroutines.ExperimentalCoroutinesApi

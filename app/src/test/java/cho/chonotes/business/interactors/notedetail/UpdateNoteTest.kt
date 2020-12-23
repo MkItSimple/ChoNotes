@@ -2,7 +2,9 @@
 
 package cho.chonotes.business.interactors.notedetail
 
+import cho.chonotes.business.data.cache.CacheErrors
 import cho.chonotes.business.data.cache.CacheErrors.CACHE_ERROR_UNKNOWN
+import cho.chonotes.business.data.cache.FORCE_NEW_NOTE_EXCEPTION
 import cho.chonotes.business.data.cache.FORCE_UPDATE_NOTE_EXCEPTION
 import cho.chonotes.business.data.cache.abstraction.NoteCacheDataSource
 import cho.chonotes.business.data.network.abstraction.NoteNetworkDataSource
@@ -11,13 +13,18 @@ import cho.chonotes.business.domain.model.NoteFactory
 import cho.chonotes.business.domain.state.DataState
 import cho.chonotes.business.interactors.notedetail.UpdateNote.Companion.UPDATE_NOTE_FAILED
 import cho.chonotes.business.interactors.notedetail.UpdateNote.Companion.UPDATE_NOTE_SUCCESS
+import cho.chonotes.business.interactors.notelist.InsertNewNote
 import cho.chonotes.di.DependencyContainer
 import cho.chonotes.framework.presentation.notedetail.state.NoteDetailStateEvent.UpdateNoteEvent
 import cho.chonotes.framework.presentation.notedetail.state.NoteDetailViewState
+import cho.chonotes.framework.presentation.notelist.state.NoteListStateEvent
+import cho.chonotes.framework.presentation.notelist.state.NoteListViewState
 import junit.framework.Assert.assertEquals
+import junit.framework.Assert.assertFalse
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.runBlocking
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import java.util.*
@@ -46,6 +53,8 @@ class UpdateNoteTest {
     // system in test
     private val updateNote: UpdateNote
 
+    private val insertNewNote: InsertNewNote
+
     // dependencies
     private val dependencyContainer: DependencyContainer = DependencyContainer()
     private val noteCacheDataSource: NoteCacheDataSource
@@ -61,20 +70,48 @@ class UpdateNoteTest {
             noteCacheDataSource = noteCacheDataSource,
             noteNetworkDataSource = noteNetworkDataSource
         )
+
+        insertNewNote = InsertNewNote(
+            noteCacheDataSource = noteCacheDataSource,
+            noteNetworkDataSource = noteNetworkDataSource,
+            noteFactory = noteFactory
+        )
     }
 
     @Test
     fun updateNote_success_confirmNetworkAndCacheUpdated() = runBlocking {
 
-        val randomNote = noteCacheDataSource.searchNotes("", "", "", "", 1)[0]
+        val newNote = noteFactory.createSingleNote(
+            note_id = UUID.randomUUID().toString(),
+            title = UUID.randomUUID().toString(),
+            note_folder_id = UUID.randomUUID().toString(),
+            uid = UUID.randomUUID().toString()
+        )
+
+        insertNewNote.insertNewNote(
+            note_id = newNote.note_id,
+            title = newNote.title,
+            toFolder = newNote.note_folder_id,
+            uid = newNote.uid,
+            stateEvent = NoteListStateEvent.InsertNewNoteEvent(
+                newNote.title,
+                newNote.note_folder_id
+            )
+        ).collect(object: FlowCollector<DataState<NoteListViewState>?>{
+            override suspend fun emit(value: DataState<NoteListViewState>?) {
+                // Success fully inserted dummy note
+            }
+        })
+
+        // val randomNote = noteCacheDataSource.searchNotes("", "", "", "", 1)[0]
         val updatedNote = Note(
-            note_id = randomNote.note_id,
+            note_id = newNote.note_id,
             title = UUID.randomUUID().toString(),
             body = UUID.randomUUID().toString(),
-            note_folder_id = UUID.randomUUID().toString(),
-            uid = UUID.randomUUID().toString(),
+            note_folder_id = newNote.note_folder_id,
+            uid = newNote.uid,
             updated_at = dependencyContainer.dateUtil.getCurrentTimestamp(),
-            created_at = randomNote.created_at
+            created_at = newNote.created_at
         )
         updateNote.updateNote(
             note = updatedNote,

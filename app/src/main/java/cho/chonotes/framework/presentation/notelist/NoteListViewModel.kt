@@ -407,6 +407,14 @@ constructor(
         setViewState(update)
     }
 
+    // workaround for tests
+    // can't submit an empty string because SearchViews SUCK
+    fun clearSearchQuery(){
+        setQuery("")
+        clearList()
+        loadFirstPage()
+    }
+
     fun loadFirstPage() {
         setQueryExhausted(false)
         resetPage()

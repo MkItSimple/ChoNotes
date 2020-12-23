@@ -104,15 +104,15 @@ class SyncNotesTest {
 
        delay(1500)
 
-        val updatedNote = Note(
-            note_id = networkNotes[0].note_id,
-            title = networkNotes[0].title,
-            body = networkNotes[0].body,
-            note_folder_id = networkNotes[0].note_folder_id,
-            uid = networkNotes[0].uid,
-            created_at = networkNotes[0].created_at,
-            updated_at = newDate
-        )
+//        val updatedNote = Note(
+//            note_id = networkNotes[0].note_id,
+//            title = networkNotes[0].title,
+//            body = networkNotes[0].body,
+//            note_folder_id = networkNotes[0].note_folder_id,
+//            uid = networkNotes[0].uid,
+//            created_at = networkNotes[0].created_at,
+//            updated_at = newDate
+//        )
 //        noteNetworkDataSource.insertOrUpdateNote(updatedNote)
 //
 //        syncNotes.syncNotes()

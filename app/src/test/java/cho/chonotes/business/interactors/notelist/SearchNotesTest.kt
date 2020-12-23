@@ -4,12 +4,14 @@ import cho.chonotes.business.data.cache.abstraction.NoteCacheDataSource
 import cho.chonotes.business.domain.state.DataState
 import cho.chonotes.business.data.cache.CacheErrors
 import cho.chonotes.business.data.cache.FORCE_SEARCH_NOTES_EXCEPTION
+import cho.chonotes.business.data.network.abstraction.NoteNetworkDataSource
 import cho.chonotes.business.domain.model.Note
 import cho.chonotes.business.domain.model.NoteFactory
 import cho.chonotes.business.interactors.notelist.SearchNotes.Companion.SEARCH_NOTES_NO_MATCHING_RESULTS
 import cho.chonotes.business.interactors.notelist.SearchNotes.Companion.SEARCH_NOTES_SUCCESS
 import cho.chonotes.di.DependencyContainer
 import cho.chonotes.framework.datasource.cache.database.ORDER_BY_ASC_DATE_UPDATED
+import cho.chonotes.framework.presentation.notelist.state.NoteListStateEvent
 import cho.chonotes.framework.presentation.notelist.state.NoteListStateEvent.*
 import cho.chonotes.framework.presentation.notelist.state.NoteListViewState
 import kotlinx.coroutines.InternalCoroutinesApi
@@ -17,6 +19,8 @@ import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
+import java.util.*
+import kotlin.collections.ArrayList
 
 /*
 
@@ -45,17 +49,30 @@ class SearchNotesTest {
     // system in test
     private val searchNotes: SearchNotes
 
+    private val insertNewNote: InsertNewNote // added
+
     // dependencies
     private val dependencyContainer: DependencyContainer = DependencyContainer()
     private val noteCacheDataSource: NoteCacheDataSource
     private val noteFactory: NoteFactory
 
+    private val noteNetworkDataSource: NoteNetworkDataSource // added
+
     init {
         dependencyContainer.build()
         noteCacheDataSource = dependencyContainer.noteCacheDataSource
         noteFactory = dependencyContainer.noteFactory
+
+        noteNetworkDataSource = dependencyContainer.noteNetworkDataSource // added
+
         searchNotes = SearchNotes(
             noteCacheDataSource = noteCacheDataSource
+        )
+
+        insertNewNote = InsertNewNote(
+            noteCacheDataSource = noteCacheDataSource,
+            noteNetworkDataSource = noteNetworkDataSource,
+            noteFactory = noteFactory
         )
     }
 
@@ -139,21 +156,43 @@ class SearchNotesTest {
             page = 1
         )
 
-        notesInCache?.let {
-            assertTrue{ it.isNotEmpty() }
-        }
+//        notesInCache?.let {
+            assertTrue{ notesInCache.isNotEmpty() }
+//        }
 
     }
 
     @Test
     fun searchNotes_fail_confirmNoResults() = runBlocking {
 
+        val newNote = noteFactory.createSingleNote(
+            note_id = UUID.randomUUID().toString(),
+            title = UUID.randomUUID().toString(),
+            note_folder_id = UUID.randomUUID().toString(),
+            uid = UUID.randomUUID().toString()
+        )
+
+        insertNewNote.insertNewNote(
+            note_id = newNote.note_id,
+            title = newNote.title,
+            toFolder = newNote.note_folder_id,
+            uid = newNote.uid,
+            stateEvent = InsertNewNoteEvent(
+                newNote.title,
+                newNote.note_folder_id
+            )
+        ).collect(object: FlowCollector<DataState<NoteListViewState>?>{
+            override suspend fun emit(value: DataState<NoteListViewState>?) {
+                // Success fully inserted dummy note
+            }
+        })
+
         val query = FORCE_SEARCH_NOTES_EXCEPTION
         var results: ArrayList<Note>? = null
         searchNotes.searchNotes(
-            uid = "",
+            uid = newNote.uid,
             query = query,
-            folderId = "",
+            folderId = newNote.note_folder_id,
             filterAndOrder = ORDER_BY_ASC_DATE_UPDATED,
             page = 1,
             stateEvent = SearchNotesEvent()
@@ -166,22 +205,22 @@ class SearchNotesTest {
                 value?.data?.noteList?.let { list ->
                     results = ArrayList(list)
                 }
-                println("results: $results")
+                println("results: ${results}")
             }
         })
 
-//        // confirm nothing was retrieved
-//        assertTrue { results?.run { size == 0 }?: true }
-//
-//        // confirm there is notes in the cache
-//        val notesInCache = noteCacheDataSource.searchNotes(
-//            uid = "",
-//            query = query,
-//            folderId = "",
-//            filterAndOrder = ORDER_BY_ASC_DATE_UPDATED,
-//            page = 1
-//        )
-//        assertTrue { notesInCache.isNotEmpty() }
+        // confirm nothing was retrieved
+        assertTrue { results?.run { size == 0 }?: true }
+
+        // confirm there is notes in the cache
+        val notesInCache = noteCacheDataSource.searchNotes(
+            uid = "",
+            query = "",
+            folderId = "",
+            filterAndOrder = ORDER_BY_ASC_DATE_UPDATED,
+            page = 1
+        )
+        assertTrue { notesInCache.isNotEmpty() }
     }
 
 

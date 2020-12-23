@@ -84,7 +84,7 @@ class NoteFirestoreServiceTests: BaseTest(){
                 .collection(NoteFirestoreServiceImpl.NOTES_COLLECTION)
                 .document(NoteFirestoreServiceImpl.USER_ID)
                 .collection(NoteFirestoreServiceImpl.NOTES_COLLECTION)
-                .document(entity.id)
+                .document(entity.note_id)
                 .set(entity)
         }
     }
@@ -99,7 +99,6 @@ class NoteFirestoreServiceTests: BaseTest(){
     @Before
     fun before(){
         noteFirestoreService = NoteFirestoreServiceImpl(
-            firebaseAuth = FirebaseAuth.getInstance(),
             firestore = firestore,
             networkMapper = networkMapper
         )
@@ -127,13 +126,13 @@ class NoteFirestoreServiceTests: BaseTest(){
         val searchResults = noteFirestoreService.getAllNotes()
 
         // choose a random note from list to update
-        val randomNote = searchResults.get(Random.nextInt(0,searchResults.size-1) + 1)
-        val UPDATED_TITLE = UUID.randomUUID().toString()
-        val UPDATED_BODY = UUID.randomUUID().toString()
+        val randomNote = searchResults[Random.nextInt(0,searchResults.size-1) + 1]
+        val updatedTitle = UUID.randomUUID().toString()
+        val updatedBody = UUID.randomUUID().toString()
         var updatedNote = noteFactory.createSingleNote(
-            id = randomNote.id,
-            title = UPDATED_TITLE,
-            body = UPDATED_BODY
+            note_id = randomNote.note_id,
+            title = updatedTitle,
+            body = updatedBody
         )
 
         // make the update
@@ -142,8 +141,8 @@ class NoteFirestoreServiceTests: BaseTest(){
         // query the note after update
         updatedNote = noteFirestoreService.searchNote(updatedNote)!!
 
-        assertEquals(UPDATED_TITLE, updatedNote.title)
-        assertEquals(UPDATED_BODY, updatedNote.body)
+        assertEquals(updatedTitle, updatedNote.title)
+        assertEquals(updatedBody, updatedNote.body)
     }
 
     @Test
@@ -162,9 +161,9 @@ class NoteFirestoreServiceTests: BaseTest(){
         val noteList = noteFirestoreService.getAllNotes()
 
         // choose one at random to delete
-        val noteToDelete = noteList.get(Random.nextInt(0, noteList.size - 1) + 1)
+        val noteToDelete = noteList[Random.nextInt(0, noteList.size - 1) + 1]
 
-        noteFirestoreService.deleteNote(noteToDelete.id)
+        noteFirestoreService.deleteNote(noteToDelete)
 
         // confirm it no longer exists in firestore
         val searchResults = noteFirestoreService.getAllNotes()
@@ -177,7 +176,7 @@ class NoteFirestoreServiceTests: BaseTest(){
         val noteList = noteFirestoreService.getAllNotes()
 
         // choose one at random to insert into "deletes" node
-        val noteToDelete = noteList.get(Random.nextInt(0, noteList.size - 1) + 1)
+        val noteToDelete = noteList[Random.nextInt(0, noteList.size - 1) + 1]
 
         noteFirestoreService.insertDeletedNote(noteToDelete)
 
@@ -195,22 +194,22 @@ class NoteFirestoreServiceTests: BaseTest(){
         val notesToDelete: ArrayList<Note> = ArrayList()
 
         // 1st
-        var noteToDelete = noteList.get(Random.nextInt(0, noteList.size - 1) + 1)
+        var noteToDelete = noteList[Random.nextInt(0, noteList.size - 1) + 1]
         noteList.remove(noteToDelete)
         notesToDelete.add(noteToDelete)
 
         // 2nd
-        noteToDelete = noteList.get(Random.nextInt(0, noteList.size - 1) + 1)
+        noteToDelete = noteList[Random.nextInt(0, noteList.size - 1) + 1]
         noteList.remove(noteToDelete)
         notesToDelete.add(noteToDelete)
 
         // 3rd
-        noteToDelete = noteList.get(Random.nextInt(0, noteList.size - 1) + 1)
+        noteToDelete = noteList[Random.nextInt(0, noteList.size - 1) + 1]
         noteList.remove(noteToDelete)
         notesToDelete.add(noteToDelete)
 
         // 4th
-        noteToDelete = noteList.get(Random.nextInt(0, noteList.size - 1) + 1)
+        noteToDelete = noteList[Random.nextInt(0, noteList.size - 1) + 1]
         noteList.remove(noteToDelete)
         notesToDelete.add(noteToDelete)
 

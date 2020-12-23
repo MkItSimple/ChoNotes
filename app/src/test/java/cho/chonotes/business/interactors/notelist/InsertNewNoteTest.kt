@@ -164,7 +164,7 @@ class InsertNewNoteTest {
 
         // confirm cache was not changed
         val cacheNoteThatWasInserted = noteCacheDataSource.searchNoteById(newNote.note_id)
-        assertEquals(cacheNoteThatWasInserted, newNote)
+        assertTrue { cacheNoteThatWasInserted == null }
     }
 }
 
