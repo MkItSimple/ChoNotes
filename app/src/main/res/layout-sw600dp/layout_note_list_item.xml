@@ -3,11 +3,14 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginEnd="@dimen/recyclerview_start_end_margins"
-    android:layout_marginStart="@dimen/recyclerview_start_end_margins"
-    android:layout_marginBottom="0dp"
-    android:background="@color/colorPrimary">
-<!--    android:weightSum="50"-->
+    android:orientation="horizontal"
+    android:weightSum="100"
+    android:gravity="center_vertical"
+    android:layout_marginEnd="@dimen/recyclerview_start_end_margins_tablet"
+    android:layout_marginStart="@dimen/recyclerview_start_end_margins_tablet"
+    android:background="@color/colorPrimary"
+    android:layout_marginBottom="-12dp">
+
     <View
         android:layout_width="5dp"
         android:layout_height="match_parent"

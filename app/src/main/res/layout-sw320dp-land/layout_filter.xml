@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/title"
-        android:textSize="22sp"
+        android:textSize="18sp"
         android:fontFamily="@font/montserrat_regular"
         android:textColor="@color/black"
         android:text="@string/filter_options"
@@ -18,7 +18,7 @@
     <RadioGroup
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:orientation="vertical"
         android:id="@+id/filter_group"
         >
@@ -27,7 +27,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:fontFamily="@font/montserrat_regular"
             android:text="@string/filter_title_or_date"
             />
@@ -37,10 +37,9 @@
             android:layout_height="wrap_content"
             android:id="@+id/filter_title"
             android:text="@string/filter_title"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:fontFamily="@font/montserrat_regular"
             android:textColor="@color/black"
-            android:layout_marginTop="20dp"
             />
 
         <RadioButton
@@ -48,10 +47,9 @@
             android:layout_height="wrap_content"
             android:id="@+id/filter_date"
             android:text="@string/filter_date"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:fontFamily="@font/montserrat_regular"
             android:textColor="@color/black"
-            android:layout_marginTop="20dp"
             />
 
     </RadioGroup>
@@ -60,7 +58,7 @@
     <RadioGroup
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:orientation="vertical"
         android:id="@+id/order_group"
         >
@@ -68,7 +66,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:fontFamily="@font/montserrat_regular"
             android:text="@string/filter_asc_desc"
             />
@@ -79,10 +77,9 @@
             android:layout_height="wrap_content"
             android:id="@+id/filter_asc"
             android:text="@string/filter_asc"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:fontFamily="@font/montserrat_regular"
             android:textColor="@color/black"
-            android:layout_marginTop="20dp"
             />
 
         <RadioButton
@@ -90,10 +87,9 @@
             android:layout_height="wrap_content"
             android:id="@+id/filter_desc"
             android:text="@string/filter_desc"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:fontFamily="@font/montserrat_regular"
             android:textColor="@color/black"
-            android:layout_marginTop="20dp"
             />
 
     </RadioGroup>
@@ -103,7 +99,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="end"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="5dp"
         >
 
         <TextView
@@ -111,7 +107,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/text_cancel"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:fontFamily="@font/montserrat_regular"
             android:layout_marginEnd="30dp"
             />
@@ -121,7 +117,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/text_Apply"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:fontFamily="@font/montserrat_regular"
             android:textColor="@color/tealDark"
             />

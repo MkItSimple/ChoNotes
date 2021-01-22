@@ -46,6 +46,7 @@ constructor(
     }
 
     private fun subscribeObservers(){
+        // navNoteListFragment()
         viewModel.hasSyncBeenExecuted().observe(viewLifecycleOwner, Observer { hasSyncBeenExecuted ->
             if(hasSyncBeenExecuted){
                 navNoteListFragment()

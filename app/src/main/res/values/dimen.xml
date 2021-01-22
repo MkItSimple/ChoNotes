@@ -17,6 +17,7 @@
     <dimen name="toolbar_title_margin">32dp</dimen>
     <dimen name="view_between_spacing">7dp</dimen>
     <dimen name="recyclerview_start_end_margins">5dp</dimen>
+    <dimen name="recyclerview_start_end_margins_tablet">10dp</dimen>
 
     <dimen name="scrollview_bottom_margin">80dp</dimen>
     <dimen name="splash_logo_width">80dp</dimen>
