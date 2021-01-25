@@ -98,81 +98,10 @@ constructor(
         return folderMapper.entityListToFolderList(folderDao.getAllFolders(currentUserID))
     }
 
-//    override suspend fun searchFoldersOrderByDateDESC(
-//        query: String,
-//        page: Int,
-//        pageSize: Int
-//    ): List<Folder> {
-//        return folderMapper.entityListToFolderList(
-//            folderDao.searchFoldersOrderByDateDESC(
-//                query = query,
-//                page = page,
-//                pageSize = pageSize
-//            )
-//        )
-//    }
-//
-//    override suspend fun searchFoldersOrderByDateASC(
-//        query: String,
-//        page: Int,
-//        pageSize: Int
-//    ): List<Folder> {
-//        return folderMapper.entityListToFolderList(
-//            folderDao.searchFoldersOrderByDateASC(
-//                query = query,
-//                page = page,
-//                pageSize = pageSize
-//            )
-//        )
-//    }
-//
-//    override suspend fun searchFoldersOrderByTitleDESC(
-//        query: String,
-//        page: Int,
-//        pageSize: Int
-//    ): List<Folder> {
-//        return folderMapper.entityListToFolderList(
-//            folderDao.searchFoldersOrderByTitleDESC(
-//                query = query,
-//                page = page,
-//                pageSize = pageSize
-//            )
-//        )
-//    }
-//
-//    override suspend fun searchFoldersOrderByTitleASC(
-//        query: String,
-//        page: Int,
-//        pageSize: Int
-//    ): List<Folder> {
-//        return folderMapper.entityListToFolderList(
-//            folderDao.searchFoldersOrderByTitleASC(
-//                query = query,
-//                page = page,
-//                pageSize = pageSize
-//            )
-//        )
-//    }
-
     override suspend fun getNumFolders(): Int {
         return folderDao.getNumFolders()
     }
 
-//    override suspend fun returnOrderedQuery(
-//        query: String,
-//        filterAndOrder: String,
-//        page: Int
-//    ): List<Folder> {
-//        return folderMapper.entityListToFolderList(
-//            folderDao.returnOrderedQuery(
-//                query = query,
-//                page = page,
-//                filterAndOrder = filterAndOrder
-//            )
-//        )
-//    }
-
-    // FoldersWithNotes
     override suspend fun searchFoldersWithNotesOrderByDateDESC(
         uid: String,
         query: String,

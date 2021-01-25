@@ -8,7 +8,6 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
-
 @FlowPreview
 @ExperimentalCoroutinesApi
 abstract class BaseViewModel<ViewState> : ViewModel()
@@ -32,7 +31,6 @@ abstract class BaseViewModel<ViewState> : ViewModel()
     val stateMessage: LiveData<StateMessage?>
         get() = dataChannelManager.messageStack.stateMessage
 
-    // FOR DEBUGGING
     fun getMessageStackSize(): Int{
         return dataChannelManager.messageStack.size
     }

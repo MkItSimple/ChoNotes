@@ -36,6 +36,10 @@ interface NoteDao {
     @Query("DELETE FROM notes")
     suspend fun deleteAllNotes()
 
+//    // for syncing
+//    @Query("SELECT * FROM notes WHERE uid = :currentUserID")
+//    suspend fun getAllNotes(currentUserID: String): List<NoteCacheEntity>
+
     // for syncing
     @Query("SELECT * FROM notes WHERE uid = :currentUserID")
     suspend fun getAllNotes(currentUserID: String): List<NoteCacheEntity>

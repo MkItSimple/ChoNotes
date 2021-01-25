@@ -28,7 +28,7 @@ class UpdateNote(
                 newTitle = note.title,
                 newBody = note.body,
                 newFolderId = note.note_folder_id,
-                timestamp = null // generate new timestamp
+                timestamp = null
             )
         }
 
@@ -77,9 +77,9 @@ class UpdateNote(
     }
 
     companion object{
-        val UPDATE_NOTE_SUCCESS = "Successfully updated note."
-        val UPDATE_NOTE_FAILED = "Failed to update note."
-        val UPDATE_NOTE_FAILED_PK = "Update failed. Note is missing primary key."
+        const val UPDATE_NOTE_SUCCESS = "Successfully updated note."
+        const val UPDATE_NOTE_FAILED = "Failed to update note."
+        const val UPDATE_NOTE_FAILED_PK = "Update failed. Note is missing primary key."
 
     }
 }

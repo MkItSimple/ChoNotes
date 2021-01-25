@@ -45,7 +45,6 @@ interface FolderDao {
     @Query("DELETE FROM folders WHERE folder_id IN (:ids)")
     suspend fun deleteFolders(ids: List<String>): Int
 
-    // for testing
     @Query("DELETE FROM folders")
     suspend fun deleteAllFolders()
 
@@ -72,64 +71,14 @@ interface FolderDao {
     @Query("DELETE FROM folders WHERE folder_id = :primaryKey")
     suspend fun deleteFolder(primaryKey: String): Int
 
-//    @Query("SELECT * FROM folders")
-//    suspend fun searchFolders(): List<FolderCacheEntity>
-
     @Query("SELECT * FROM folders")
     @Transaction
     suspend fun searchFolders(): List<FolderWithNotesCacheEntity>
-
-//    @Query("""
-//        SELECT * FROM folders
-//        WHERE folder_name LIKE '%' || :query || 'ss%'
-//        ORDER BY updated_at DESC LIMIT (:page * :pageSize)
-//        """)
-//    suspend fun searchFoldersOrderByDateDESC(
-//        query: String,
-//        page: Int,
-//        pageSize: Int = FOLDER_PAGINATION_PAGE_SIZE
-//    ): List<FolderCacheEntity>
-//
-//    @Query("""
-//        SELECT * FROM folders
-//        WHERE folder_name LIKE '%' || :query || 'ss%'
-//        ORDER BY updated_at ASC LIMIT (:page * :pageSize)
-//        """)
-//    suspend fun searchFoldersOrderByDateASC(
-//        query: String,
-//        page: Int,
-//        pageSize: Int = FOLDER_PAGINATION_PAGE_SIZE
-//    ): List<FolderCacheEntity>
-//
-//    @Query("""
-//        SELECT * FROM folders
-//        WHERE folder_name LIKE '%' || :query || '%'
-//        ORDER BY folder_name DESC LIMIT (:page * :pageSize)
-//        """)
-//    suspend fun searchFoldersOrderByTitleDESC(
-//        query: String,
-//        page: Int,
-//        pageSize: Int = FOLDER_PAGINATION_PAGE_SIZE
-//    ): List<FolderCacheEntity>
-//
-//    @Query("""
-//        SELECT * FROM folders
-//        WHERE folder_name LIKE '%' || :query || '%'
-//        ORDER BY folder_name ASC LIMIT (:page * :pageSize)
-//        """)
-//    suspend fun searchFoldersOrderByTitleASC(
-//        query: String,
-//        page: Int,
-//        pageSize: Int = FOLDER_PAGINATION_PAGE_SIZE
-//    ): List<FolderCacheEntity>
-
 
     @Query("SELECT COUNT(*) FROM folders")
 
     suspend fun getNumFolders(): Int
 
-
-    // FoldersWithNotes
     @Query("""
         SELECT * FROM folders 
         WHERE folder_name LIKE '%' || :query || '%' 
@@ -186,48 +135,6 @@ interface FolderDao {
         pageSize: Int = FOLDER_PAGINATION_PAGE_SIZE
     ): List<FolderWithNotesCacheEntity>
 }
-
-
-//suspend fun FolderDao.returnOrderedQuery(
-//    query: String,
-//    filterAndOrder: String,
-//    page: Int
-//): List<FolderCacheEntity> {
-//
-//    when{
-//
-//        filterAndOrder.contains(ORDER_BY_DESC_DATE_UPDATED) ->{
-//            return searchFoldersOrderByDateDESC(
-//                query = query,
-//                page = page)
-//        }
-//
-//        filterAndOrder.contains(ORDER_BY_ASC_DATE_UPDATED) ->{
-//            return searchFoldersOrderByDateASC(
-//                query = query,
-//                page = page)
-//        }
-//
-//        filterAndOrder.contains(ORDER_BY_DESC_TITLE) ->{
-//            return searchFoldersOrderByTitleDESC(
-//                query = query,
-//                page = page)
-//        }
-//
-//        filterAndOrder.contains(ORDER_BY_ASC_TITLE) ->{
-//            return searchFoldersOrderByTitleASC(
-//                query = query,
-//                page = page)
-//        }
-//        else ->
-//            return searchFoldersOrderByDateDESC(
-//                query = query,
-//                page = page
-//            )
-//    }
-//}
-
-// Folder With Notes
 
 suspend fun FolderDao.returnOrderedQueryWithNotes(
     uid: String,

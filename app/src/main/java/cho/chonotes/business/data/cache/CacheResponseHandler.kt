@@ -3,7 +3,6 @@ package cho.chonotes.business.data.cache
 import cho.chonotes.business.data.cache.CacheErrors.CACHE_DATA_NULL
 import cho.chonotes.business.domain.state.*
 
-
 abstract class CacheResponseHandler <ViewState, Data>(
     private val response: CacheResult<Data?>,
     private val stateEvent: StateEvent?

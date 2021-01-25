@@ -39,13 +39,10 @@ constructor(
     val collapsingToolbarState: LiveData<CollapsingToolbarState>
         get() = noteInteractionManager.collapsingToolbarState
 
-    override fun handleNewData(data: NoteDetailViewState) {
-        // no data coming in from requests...
-    }
+    override fun handleNewData(data: NoteDetailViewState) {}
 
     override fun setStateEvent(stateEvent: StateEvent) {
 
-//        if(canExecuteNewStateEvent(stateEvent)){
             val job: Flow<DataState<NoteDetailViewState>?> = when(stateEvent){
 
                 is UpdateNoteEvent -> {
@@ -88,7 +85,6 @@ constructor(
                 }
             }
             launchJob(stateEvent, job)
-//        }
     }
 
     fun beginPendingDelete(note: Note){
@@ -183,8 +179,7 @@ constructor(
         noteInteractionManager.setNewNoteBodyState(state)
     }
 
-    fun isToolbarCollapsed() = collapsingToolbarState.toString()
-        .equals(Collapsed().toString())
+    fun isToolbarCollapsed() = collapsingToolbarState.toString() == Collapsed().toString()
 
     fun setIsUpdatePending(isPending: Boolean){
         val update = getCurrentViewStateOrNew()
@@ -196,10 +191,6 @@ constructor(
         return getCurrentViewStateOrNew().isUpdatePending?: false
     }
 
-    fun isToolbarExpanded() = collapsingToolbarState.toString()
-        .equals(Expanded().toString())
-
-    // return true if in EditState
     fun checkEditState() = noteInteractionManager.checkEditState()
 
     fun exitEditState() = noteInteractionManager.exitEditState()
@@ -208,7 +199,6 @@ constructor(
 
     fun isEditingBody() = noteInteractionManager.isEditingBody()
 
-    // force observers to refresh
     fun triggerNoteObservers(){
         getCurrentViewStateOrNew().note?.let { note ->
             setNote(note)

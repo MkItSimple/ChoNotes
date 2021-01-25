@@ -67,8 +67,6 @@ class SearchFolders(
     companion object{
         val SEARCH_FOLDERS_SUCCESS = "Successfully retrieved list of folders."
         val SEARCH_FOLDERS_NO_MATCHING_RESULTS = "There are no folders that match that query."
-        val SEARCH_FOLDERS_FAILED = "Failed to retrieve the list of folders."
-
     }
 }
 

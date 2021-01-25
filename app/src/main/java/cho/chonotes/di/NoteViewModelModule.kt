@@ -1,4 +1,4 @@
-package cho.chonotes.notes.di
+package cho.chonotes.di
 
 import android.content.SharedPreferences
 import androidx.lifecycle.ViewModelProvider
@@ -25,10 +25,8 @@ object NoteViewModelModule {
     @JvmStatic
     @Provides
     fun provideNoteViewModelFactory(
-        folderDao: FolderDao,
         folderListInteractors: FolderListInteractors,
         folderFactory: FolderFactory,
-
         noteListInteractors: NoteListInteractors,
         noteDetailInteractors: NoteDetailInteractors,
         noteNetworkSyncManager: NoteNetworkSyncManager,
@@ -37,10 +35,8 @@ object NoteViewModelModule {
         sharedPreferences: SharedPreferences
     ): ViewModelProvider.Factory{
         return NoteViewModelFactory(
-            folderDao = folderDao,
             folderListInteractors = folderListInteractors,
             folderFactory = folderFactory,
-
             noteListInteractors = noteListInteractors,
             noteDetailInteractors = noteDetailInteractors,
             noteNetworkSyncManager = noteNetworkSyncManager,

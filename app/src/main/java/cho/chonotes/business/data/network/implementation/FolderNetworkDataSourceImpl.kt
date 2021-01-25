@@ -6,7 +6,6 @@ import cho.chonotes.framework.datasource.network.abstraction.FolderFirestoreServ
 import javax.inject.Inject
 import javax.inject.Singleton
 
-
 @Singleton
 class FolderNetworkDataSourceImpl
 @Inject

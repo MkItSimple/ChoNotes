@@ -2,10 +2,9 @@ package cho.chonotes.business.interactors.folderlist
 
 import cho.chonotes.business.data.cache.CacheResponseHandler
 import cho.chonotes.business.data.cache.abstraction.FolderCacheDataSource
-import cho.chonotes.business.domain.state.*
 import cho.chonotes.business.data.util.safeCacheCall
 import cho.chonotes.business.domain.model.Folder
-import cho.chonotes.framework.datasource.cache.model.FolderWithNotesCacheEntity
+import cho.chonotes.business.domain.state.*
 import cho.chonotes.framework.presentation.folderlist.state.FolderListViewState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow

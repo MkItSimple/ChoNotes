@@ -1,7 +1,5 @@
 package cho.chonotes.framework.presentation.notedetail.state
 
-
-
 sealed class NoteInteractionState {
 
     class EditState: NoteInteractionState() {

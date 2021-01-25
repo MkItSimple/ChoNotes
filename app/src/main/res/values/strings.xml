@@ -5,7 +5,6 @@
     <string name="title_reminders">Reminders module</string>
     <string name="title_settings">Settings module</string>
 
-
     <string name="module_notes_name">notes</string>
     <string name="module_settings_name">settings</string>
     <string name="module_reminders_name">reminders</string>
@@ -21,9 +20,8 @@
     <string name="text_enter_folder_name">Enter folder name</string>
     <string name="text_undo">Undo</string>
 
-
     <string name="text_notes_go_here">Notes go here</string>
-    <string name="text_due_date">Due Date...</string>
+    <string name="text_due_date">Due Date…</string>
     <string name="text_note_title_cannot_be_empty">Note title can not be empty.</string>
     <string name="text_Edit_body">Edit Body</string>
     <string name="text_Edit_title">Edit Title</string>
@@ -40,8 +38,6 @@
     <string name="filter_asc_desc">Ascending or descending order</string>
     <string name="text_Apply">Apply</string>
     <string name="text_enter_password">Enter password</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <string name="select_folder">Select folder</string>
     <string name="new_folder">New folder</string>
@@ -51,4 +47,15 @@
     <string name="folders_icon">Folders icon</string>
     <string name="select_note">Select note</string>
     <string name="ok">OK</string>
+    <string name="dummy_text">Dummy text</string>
+    <string name="delete">Delete</string>
+    <string name="rename">Rename</string>
+    <string name="content_description">Content Description</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete_folder_only">Delete folder only</string>
+    <string name="delete_folder_and_notes">Delete folder and notes</string>
+    <string name="if_you_delete_the_folder_only_the_notes_in_it_will_be_moved_to_the_default_notes_folder">If you delete the folder only. the notes in it will be moved to the default notes folder.</string>
+    <string name="cho_notes">Cho Notes</string>
+    <string name="move">Move</string>
+    <string name="some_note_title">Some Note Title</string>
 </resources>

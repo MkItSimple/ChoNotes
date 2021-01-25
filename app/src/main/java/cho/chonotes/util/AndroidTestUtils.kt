@@ -10,5 +10,4 @@ constructor(
     private val isTest: Boolean
 ){
     fun isTest() = isTest
-
 }

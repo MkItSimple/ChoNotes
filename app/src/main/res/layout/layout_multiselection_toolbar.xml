@@ -18,7 +18,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             android:id="@+id/action_exit_multiselect_state"
-            android:src="@drawable/ic_close_grey_24dp" />
+            android:src="@drawable/ic_close_grey_24dp"
+            android:contentDescription="@string/content_description"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

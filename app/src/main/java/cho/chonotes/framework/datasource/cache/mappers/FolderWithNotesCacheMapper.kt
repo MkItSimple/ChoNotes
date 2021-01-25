@@ -1,22 +1,13 @@
 package cho.chonotes.framework.datasource.cache.mappers
 
 import cho.chonotes.business.domain.model.Folder
-import cho.chonotes.business.domain.model.FolderWithNotes
-import cho.chonotes.business.domain.util.DateUtil
-import cho.chonotes.business.domain.util.EntityMapper
 import cho.chonotes.business.domain.util.TwoEntityMapper
-import cho.chonotes.framework.datasource.cache.model.FolderCacheEntity
 import cho.chonotes.framework.datasource.cache.model.FolderWithNotesCacheEntity
 import javax.inject.Inject
 
-/**
- * Maps Folder to FolderCacheEntity or FolderCacheEntity to Folder.
- */
 class FolderWithNotesCacheMapper
 @Inject
-constructor(
-    private val dateUtil: DateUtil
-): TwoEntityMapper<FolderWithNotesCacheEntity, Folder>
+constructor(): TwoEntityMapper<FolderWithNotesCacheEntity, Folder>
 {
 
     fun entityListToFolderList(entities: List<FolderWithNotesCacheEntity>): List<Folder>{
@@ -26,14 +17,6 @@ constructor(
         }
         return list
     }
-
-//    fun folderListToEntityList(folders: List<Folder>): List<FolderWithNotesCacheEntity>{
-//        val entities: ArrayList<FolderCacheEntity> = ArrayList()
-//        for(folder in folders){
-//            entities.add(mapToEntity(folder))
-//        }
-//        return entities
-//    }
 
     override fun mapFromEntity(entity: FolderWithNotesCacheEntity): Folder {
         return Folder(

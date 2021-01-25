@@ -44,7 +44,7 @@ class GetNumNotes(
     }
 
     companion object{
-        val GET_NUM_NOTES_SUCCESS = "Successfully retrieved the number of notes from the cache."
-        val GET_NUM_NOTES_FAILED = "Failed to get the number of notes from the cache."
+        const val GET_NUM_NOTES_SUCCESS = "Successfully retrieved the number of notes from the cache."
+        const val GET_NUM_NOTES_FAIL = "Failed to retrieve the number of notes from the cache."
     }
 }

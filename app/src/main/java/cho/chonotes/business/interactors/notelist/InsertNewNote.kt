@@ -1,16 +1,14 @@
 package cho.chonotes.business.interactors.notelist
 
 import cho.chonotes.business.data.cache.CacheResponseHandler
-import cho.chonotes.business.domain.model.NoteFactory
-import cho.chonotes.business.domain.state.*
-import cho.chonotes.business.data.util.safeApiCall
-import cho.chonotes.business.data.util.safeCacheCall
 import cho.chonotes.business.data.cache.abstraction.NoteCacheDataSource
 import cho.chonotes.business.data.network.abstraction.NoteNetworkDataSource
+import cho.chonotes.business.data.util.safeApiCall
+import cho.chonotes.business.data.util.safeCacheCall
 import cho.chonotes.business.domain.model.Note
-import cho.chonotes.framework.presentation.notelist.NOTES
+import cho.chonotes.business.domain.model.NoteFactory
+import cho.chonotes.business.domain.state.*
 import cho.chonotes.framework.presentation.notelist.state.NoteListViewState
-import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -78,7 +76,7 @@ class InsertNewNote(
 
         emit(cacheResponse)
 
-            updateNetwork(cacheResponse?.stateMessage?.response?.message, newNote)
+        updateNetwork(cacheResponse?.stateMessage?.response?.message, newNote)
     }
 
     private suspend fun updateNetwork(cacheResponse: String?, newNote: Note){
@@ -91,8 +89,7 @@ class InsertNewNote(
     }
 
     companion object{
-        val INSERT_NOTE_SUCCESS = "Successfully inserted new note."
-        val INSERT_NOTE_FAILED = "Failed to insert new note."
-        val DEFAULT_FOLDER_ID = "notes"
+        const val INSERT_NOTE_SUCCESS = "Successfully inserted new note."
+        const val INSERT_NOTE_FAILED = "Failed to insert new note."
     }
 }

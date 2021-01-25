@@ -32,39 +32,8 @@ interface FolderDaoService {
 
     suspend fun getAllFolders(currentUserID: String): List<Folder>
 
-//    suspend fun searchFoldersOrderByDateDESC(
-//        query: String,
-//        page: Int,
-//        pageSize: Int = FOLDER_PAGINATION_PAGE_SIZE
-//    ): List<Folder>
-//
-//    suspend fun searchFoldersOrderByDateASC(
-//        query: String,
-//        page: Int,
-//        pageSize: Int = FOLDER_PAGINATION_PAGE_SIZE
-//    ): List<Folder>
-//
-//    suspend fun searchFoldersOrderByTitleDESC(
-//        query: String,
-//        page: Int,
-//        pageSize: Int = FOLDER_PAGINATION_PAGE_SIZE
-//    ): List<Folder>
-//
-//    suspend fun searchFoldersOrderByTitleASC(
-//        query: String,
-//        page: Int,
-//        pageSize: Int = FOLDER_PAGINATION_PAGE_SIZE
-//    ): List<Folder>
-
     suspend fun getNumFolders(): Int
 
-//    suspend fun returnOrderedQuery(
-//        query: String,
-//        filterAndOrder: String,
-//        page: Int
-//    ): List<Folder>
-
-    // FoldersWithNotes
     suspend fun searchFoldersWithNotesOrderByDateDESC(
         uid: String,
         query: String,

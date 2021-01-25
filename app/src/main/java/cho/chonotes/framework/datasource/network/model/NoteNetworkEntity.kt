@@ -20,8 +20,6 @@ data class NoteNetworkEntity(
     var created_at: Timestamp
 
 ){
-
-    // no arg constructor for firestore
     constructor(): this(
         "",
         "",
@@ -31,14 +29,6 @@ data class NoteNetworkEntity(
         Timestamp.now(),
         Timestamp.now()
     )
-
-
-
-    companion object{
-        const val UPDATED_AT_FIELD = "updated_at"
-        const val TITLE_FIELD = "title"
-        const val BODY_FIELD = "body"
-    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -51,7 +41,6 @@ data class NoteNetworkEntity(
         if (body != other.body) return false
         if (note_folder_id != other.note_folder_id) return false
         if (uid != other.uid) return false
-//        if (updated_at != other.updated_at) return false // ignore
         if (created_at != other.created_at) return false
 
         return true

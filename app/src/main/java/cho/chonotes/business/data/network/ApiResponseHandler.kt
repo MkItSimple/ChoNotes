@@ -4,7 +4,6 @@ import cho.chonotes.business.data.network.NetworkErrors.NETWORK_DATA_NULL
 import cho.chonotes.business.data.network.NetworkErrors.NETWORK_ERROR
 import cho.chonotes.business.domain.state.*
 
-
 abstract class ApiResponseHandler <ViewState, Data>(
     private val response: ApiResult<Data?>,
     private val stateEvent: StateEvent?

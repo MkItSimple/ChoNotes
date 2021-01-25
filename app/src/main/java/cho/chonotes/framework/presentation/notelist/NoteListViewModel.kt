@@ -3,12 +3,11 @@ package cho.chonotes.framework.presentation.notelist
 import android.content.SharedPreferences
 import android.os.Parcelable
 import androidx.lifecycle.LiveData
-import cho.chonotes.business.domain.model.Folder
 import cho.chonotes.business.domain.model.Note
 import cho.chonotes.business.domain.model.NoteFactory
+import cho.chonotes.business.domain.state.*
 import cho.chonotes.business.interactors.notelist.DeleteMultipleNotes.Companion.DELETE_NOTES_YOU_MUST_SELECT
 import cho.chonotes.business.interactors.notelist.NoteListInteractors
-import cho.chonotes.business.domain.state.*
 import cho.chonotes.framework.datasource.cache.database.NOTE_FILTER_DATE_CREATED
 import cho.chonotes.framework.datasource.cache.database.NOTE_ORDER_DESC
 import cho.chonotes.framework.datasource.preferences.PreferenceKeys.Companion.NOTE_FILTER
@@ -18,10 +17,11 @@ import cho.chonotes.framework.presentation.notelist.state.NoteListInteractionMan
 import cho.chonotes.framework.presentation.notelist.state.NoteListStateEvent.*
 import cho.chonotes.framework.presentation.notelist.state.NoteListToolbarState
 import cho.chonotes.framework.presentation.notelist.state.NoteListViewState
-import cho.chonotes.framework.presentation.notelist.state.NoteListViewState.*
+import cho.chonotes.framework.presentation.notelist.state.NoteListViewState.NotePendingDelete
 import cho.chonotes.util.printLogD
 import com.google.firebase.auth.FirebaseAuth
-import kotlinx.coroutines.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -32,10 +32,10 @@ const val NOTE_PENDING_DELETE_BUNDLE_KEY = "pending_delete"
 
 const val NOTE_LIST_ERROR_RETRIEVEING_SELECTED_FOLDER = "Error retrieving selected folder from bundle."
 const val NOTE_LIST_SELECTED_FOLDER_BUNDLE_KEY = "selectedFolder"
-const val NOTE_LIST_SELECTED_NOTES_BUNDLE_KEY = "selectedNotes" // for moving notes
+const val NOTE_LIST_SELECTED_NOTES_BUNDLE_KEY = "selectedNotes"
 
-const val NOTE_LIST_PREVIOUS_FRAGMENT_BUNDLE_KEY = "previousFragment" // for moving notes
-const val NOTES = "" // for moving notes
+const val NOTE_LIST_PREVIOUS_FRAGMENT_BUNDLE_KEY = "previousFragment"
+const val NOTES = ""
 
 @ExperimentalCoroutinesApi
 @FlowPreview
@@ -49,7 +49,7 @@ constructor(
     sharedPreferences: SharedPreferences
 ): BaseViewModel<NoteListViewState>(){
 
-    val uid = FirebaseAuth.getInstance().currentUser!!.uid
+    val uid = FirebaseAuth.getInstance().currentUser?.uid ?: ""
 
     val noteListInteractionManager =
         NoteListInteractionManager()
@@ -230,7 +230,7 @@ constructor(
             ?: NOTE_ORDER_DESC
     }
 
-    fun getSearchQuery(): String {
+    private fun getSearchQuery(): String {
         return getCurrentViewStateOrNew().searchQuery
             ?: return ""
     }
@@ -257,7 +257,6 @@ constructor(
         setViewState(update)
     }
 
-    // can be selected from Recyclerview or created new from dialog
     fun setNote(note: Note?){
         val update = getCurrentViewStateOrNew()
         update.newNote = note
@@ -270,14 +269,11 @@ constructor(
         setViewState(update)
     }
 
-
-    // if a note is deleted and then restored, the id will be incorrect.
-    // So need to reset it here.
     private fun setRestoredNoteId(restoredNote: Note){
         val update = getCurrentViewStateOrNew()
         update.noteList?.let { noteList ->
             for((index, note) in noteList.withIndex()){
-                if(note.title.equals(restoredNote.title)){
+                if(note.title == restoredNote.title){
                     noteList.remove(note)
                     noteList.add(index, restoredNote)
                     update.noteList = noteList
@@ -330,7 +326,7 @@ constructor(
     }
 
     fun undoDelete(){
-        // replace note in viewstate
+
         val update = getCurrentViewStateOrNew()
         update.notePendingDelete?.let { note ->
 
@@ -384,7 +380,7 @@ constructor(
         body: String? = null
     ) = noteFactory.createSingleNote(id, title, body, note_folder_id = "", uid = "")
 
-    fun getNoteListSize() = getCurrentViewStateOrNew().noteList?.size?: 0
+    private fun getNoteListSize() = getCurrentViewStateOrNew().noteList?.size?: 0
 
     private fun getNumNotesInCache() = getCurrentViewStateOrNew().numNotesInCache?: 0
 
@@ -396,7 +392,6 @@ constructor(
         setViewState(update)
     }
 
-    // for debugging
     fun getActiveJobs() = dataChannelManager.getActiveJobs()
 
     fun isQueryExhausted(): Boolean{
@@ -463,7 +458,7 @@ constructor(
         setViewState(update)
     }
 
-    fun clearLayoutManagerState(){
+    private fun clearLayoutManagerState(){
         val update = getCurrentViewStateOrNew()
         update.layoutManagerState = null
         setViewState(update)
@@ -498,12 +493,6 @@ constructor(
         editor.putString(NOTE_ORDER, order)
         editor.apply()
     }
-
-//    fun setFolderId(selectedFolder: Folder) {
-//        val update = getCurrentViewStateOrNew()
-//        update.noteFolderId = selectedFolder.folder_id
-//        setViewState(update)
-//    }
 
     fun setSelectedFolderId(selectedFolderId: String) {
         val update = getCurrentViewStateOrNew()

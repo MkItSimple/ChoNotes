@@ -1,18 +1,13 @@
 package cho.chonotes.framework.presentation
 
 import android.content.Context
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.InputType
-import android.util.Log
 import android.view.inputmethod.InputMethodManager
-import android.widget.ArrayAdapter
+import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
-import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.callbacks.onDismiss
-import com.afollestad.materialdialogs.input.input
 import cho.chonotes.R
 import cho.chonotes.business.domain.state.*
 import cho.chonotes.business.domain.state.UIComponentType.*
@@ -21,6 +16,9 @@ import cho.chonotes.framework.presentation.common.displayToast
 import cho.chonotes.framework.presentation.common.gone
 import cho.chonotes.framework.presentation.common.visible
 import cho.chonotes.util.TodoCallback
+import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.callbacks.onDismiss
+import com.afollestad.materialdialogs.input.input
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
@@ -28,14 +26,11 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject
 
-
 @ExperimentalCoroutinesApi
 @FlowPreview
 class MainActivity : AppCompatActivity(),
     UIController
 {
-
-    private val TAG: String = "AppDebug"
 
     @Inject
     lateinit var fragmentFactory: NoteFragmentFactory
@@ -143,9 +138,6 @@ class MainActivity : AppCompatActivity(),
             }
 
             is None -> {
-                // This would be a good place to send to your Error Reporting
-                // software of choice (ex: Firebase crash reporting)
-                Log.i(TAG, "onResponseReceived: ${response.message}")
                 stateMessageCallback.removeMessageFromStack()
             }
         }
@@ -205,7 +197,6 @@ class MainActivity : AppCompatActivity(),
                 }
 
                 else -> {
-                    // do nothing
                     stateMessageCallback.removeMessageFromStack()
                     null
                 }

@@ -37,9 +37,6 @@ data class NoteCacheEntity(
             return "You must enter a title."
         }
 
-        fun nullIdError(): String{
-            return "NoteEntity object has a null id. This should not be possible. Check local database."
-        }
     }
 
     override fun equals(other: Any?): Boolean {
@@ -53,7 +50,6 @@ data class NoteCacheEntity(
         if (body != other.body) return false
         if (note_folder_id != other.note_folder_id) return false
         if (uid != other.uid) return false
-//        if (updated_at != other.updated_at) return false // ignore this
         if (created_at != other.created_at) return false
 
         return true

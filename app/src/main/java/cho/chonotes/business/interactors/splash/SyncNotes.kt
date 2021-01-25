@@ -4,34 +4,23 @@ import cho.chonotes.business.data.cache.CacheResponseHandler
 import cho.chonotes.business.data.cache.abstraction.NoteCacheDataSource
 import cho.chonotes.business.data.network.ApiResponseHandler
 import cho.chonotes.business.data.network.abstraction.NoteNetworkDataSource
-import cho.chonotes.business.domain.model.Note
-import cho.chonotes.business.domain.state.DataState
-import cho.chonotes.business.domain.util.DateUtil
 import cho.chonotes.business.data.util.safeApiCall
 import cho.chonotes.business.data.util.safeCacheCall
+import cho.chonotes.business.domain.model.Note
+import cho.chonotes.business.domain.state.DataState
 import cho.chonotes.util.printLogD
 import com.google.firebase.auth.FirebaseAuth
-import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.withContext
 
-/*
-    Query all notes in the cache. It will then search firestore for
-    each corresponding note but with an extra filter: It will only return notes where
-    cached_note.updated_at < network_note.updated_at. It will update the cached notes
-    where that condition is met. If the note does not exist in Firestore (maybe due to
-    network being down at time of insertion), insert it
-    (**This must be done AFTER
-    checking for deleted notes and performing that sync**).
- */
 @Suppress("IMPLICIT_CAST_TO_ANY")
 class SyncNotes(
     private val noteCacheDataSource: NoteCacheDataSource,
-    private val noteNetworkDataSource: NoteNetworkDataSource,
-    private val dateUtil: DateUtil
+    private val noteNetworkDataSource: NoteNetworkDataSource
 ){
-    private val currentUserID = FirebaseAuth.getInstance().currentUser?.let {
-        it.uid
-    } ?: ""
+//    private val currentUserID = FirebaseAuth.getInstance().currentUser?.let {
+//        it.uid
+//    } ?: "GIOqxtta3zdTPmlvLmZLTiyCfGp2"
 
     suspend fun syncNotes() {
 
@@ -47,7 +36,7 @@ class SyncNotes(
 
     private suspend fun getCachedNotes(): List<Note> {
         val cacheResult = safeCacheCall(IO){
-            noteCacheDataSource.getAllNotes(currentUserID)
+            noteCacheDataSource.getAllNotes("GIOqxtta3zdTPmlvLmZLTiyCfGp2")
         }
 
         val response = object: CacheResponseHandler<List<Note>, List<Note>>(
@@ -88,11 +77,6 @@ class SyncNotes(
         return response?.data ?: ArrayList()
     }
 
-    // get all notes from network
-    // if they do not exist in cache, insert them
-    // if they do exist in cache, make sure they are up to date
-    // while looping, remove notes from the cachedNotes list. If any remain, it means they
-    // should be in the network but aren't. So insert them.
     private suspend fun syncNetworkNotesWithCachedNotes(
         cachedNotes: ArrayList<Note>,
         networkNotes: List<Note>
@@ -104,7 +88,7 @@ class SyncNotes(
                 checkIfCachedNoteRequiresUpdate(cachedNote, note)
             }?: noteCacheDataSource.insertNote(note)
         }
-        // insert remaining into network
+
         for(cachedNote in cachedNotes){
             noteNetworkDataSource.insertOrUpdateNote(cachedNote)
         }
@@ -117,7 +101,6 @@ class SyncNotes(
         val cacheUpdatedAt = cachedNote.updated_at
         val networkUpdatedAt = networkNote.updated_at
 
-        // update cache (network has newest data)
         if(networkUpdatedAt > cacheUpdatedAt){
             printLogD("SyncNotes",
                 "cacheUpdatedAt: ${cacheUpdatedAt}, " +
@@ -129,25 +112,15 @@ class SyncNotes(
                     networkNote.title,
                     networkNote.body,
                     networkNote.note_folder_id,
-                    networkNote.updated_at // retain network timestamp
+                    networkNote.updated_at
                 )
             }
-        }
-        // update network (cache has newest data)
-        else if(networkUpdatedAt < cacheUpdatedAt){
+        } else if(networkUpdatedAt < cacheUpdatedAt){
             safeApiCall(IO){
                 noteNetworkDataSource.insertOrUpdateNote(cachedNote)
             }
         }
     }
-
-    // for debugging
-//    private fun printCacheLongTimestamps(notes: List<Note>){
-//        for(note in notes){
-//            printLogD("SyncNotes",
-//                "date: ${dateUtil.convertServerStringDateToLong(note.updated_at)}")
-//        }
-//    }
 
 }
 

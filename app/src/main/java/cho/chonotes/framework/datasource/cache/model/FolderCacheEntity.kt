@@ -27,16 +27,6 @@ data class FolderCacheEntity(
     var created_at: String
 
 ){
-    companion object{
-
-        fun nullTitleError(): String{
-            return "You must enter a folder_name."
-        }
-
-        fun nullIdError(): String{
-            return "FolderEntity object has a null id. This should not be possible. Check local database."
-        }
-    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

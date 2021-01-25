@@ -9,8 +9,8 @@ import kotlinx.android.parcel.Parcelize
 data class NoteListViewState(
 
     var noteList: ArrayList<Note>? = null,
-    var newNote: Note? = null, // note that can be created with fab
-    var notePendingDelete: NotePendingDelete? = null, // set when delete is pending (can be undone)
+    var newNote: Note? = null,
+    var notePendingDelete: NotePendingDelete? = null,
     var searchQuery: String? = null,
     var page: Int? = null,
     var isQueryExhausted: Boolean? = null,

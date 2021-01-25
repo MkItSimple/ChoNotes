@@ -1,10 +1,9 @@
 package cho.chonotes.framework.presentation.notedetail
 
+import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
@@ -34,10 +33,9 @@ import kotlinx.android.synthetic.main.layout_note_detail_toolbar.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 
-
 const val NOTE_DETAIL_STATE_BUNDLE_KEY = "cho.chonotes.notes.framework.presentation.notedetail.state"
 
-
+@SuppressLint("UseCompatLoadingForDrawables")
 @FlowPreview
 @ExperimentalCoroutinesApi
 class NoteDetailFragment
@@ -62,14 +60,13 @@ constructor(
         subscribeObservers()
 
         note_title.setOnClickListener {
-            onClick_noteTitle()
+            onClickNoteTitle()
         }
 
         note_body.setOnClickListener {
-            onClick_noteBody()
+            onClickNoteBody()
         }
 
-        setupMarkdown()
         getSelectedNoteFromPreviousFragment()
         restoreInstanceState()
     }
@@ -88,15 +85,7 @@ constructor(
         )
     }
 
-    private fun setupMarkdown(){
-        activity?.run {
-//            val markdownProcessor = MarkdownProcessor(this)
-//            markdownProcessor.factory(EditFactory.create())
-//            markdownProcessor.live(note_body)
-        }
-    }
-
-    private fun onClick_noteTitle(){
+    private fun onClickNoteTitle(){
         if(!viewModel.isEditingTitle()){
             updateBodyInViewModel()
             updateNote()
@@ -104,7 +93,7 @@ constructor(
         }
     }
 
-    private fun onClick_noteBody(){
+    private fun onClickNoteBody(){
         if(!viewModel.isEditingBody()){
             updateTitleInViewModel()
             updateNote()
@@ -116,11 +105,9 @@ constructor(
 
     private fun setBottomViewHeight(height: Int) {
         val params = bottom_view.layoutParams as LinearLayout.LayoutParams
-//        params.setMargins(0, 0, 50, 0) //substitute parameters for left, top, right, bottom
-        params.height = height//substitute parameters for left, top, right, bottom
+        params.height = height
         bottom_view.layoutParams = params
     }
-
 
     private fun onBackPressed() {
         view?.hideKeyboard()
@@ -196,9 +183,7 @@ constructor(
                                 findNavController().popBackStack()
                             }
 
-                            else -> {
-                                // do nothing
-                            }
+                            else -> {}
                         }
                     }
                 }
@@ -254,6 +239,7 @@ constructor(
             }
         })
     }
+
 
     private fun displayDefaultToolbar(){
         activity?.let { a ->
@@ -319,7 +305,6 @@ constructor(
             (args.getParcelable(NOTE_DETAIL_STATE_BUNDLE_KEY) as NoteDetailViewState?)?.let { viewState ->
                 viewModel.setViewState(viewState)
 
-                // One-time check after rotation
                 if(viewModel.isToolbarCollapsed()){
                     app_bar.setExpanded(false)
                     transitionToCollapsedMode()
@@ -353,8 +338,6 @@ constructor(
         app_bar.addOnOffsetChangedListener(
             AppBarLayout.OnOffsetChangedListener{ _, offset ->
 
-                Log.d("offset", "offset $offset ")
-
                 if(offset < COLLAPSING_TOOLBAR_VISIBILITY_THRESHOLD){
                     updateTitleInViewModel()
                     if(viewModel.isEditingTitle()){
@@ -363,11 +346,9 @@ constructor(
                         updateNote()
                     }
                     viewModel.setCollapsingToolbarState(Collapsed())
-//                    Log.d("toolbarState", "Collapsed $offset")
                 }
                 else{
                     viewModel.setCollapsingToolbarState(Expanded())
-//                    Log.d("toolbarState", "Expanded $")
                 }
             })
 
@@ -414,9 +395,7 @@ constructor(
                                     }
                                 }
 
-                                override fun cancel() {
-                                    // do nothing
-                                }
+                                override fun cancel() {}
                             }
                         ),
                         messageType = MessageType.Info()
@@ -432,8 +411,8 @@ constructor(
 
     private fun onDeleteSuccess(){
         val bundle = bundleOf(NOTE_PENDING_DELETE_BUNDLE_KEY to viewModel.getNote())
-        viewModel.setNote(null) // clear note from ViewState
-        viewModel.setIsUpdatePending(false) // prevent update onPause
+        viewModel.setNote(null)
+        viewModel.setIsUpdatePending(false)
         findNavController().navigate(
             R.id.action_note_detail_fragment_to_noteListFragment,
             bundle

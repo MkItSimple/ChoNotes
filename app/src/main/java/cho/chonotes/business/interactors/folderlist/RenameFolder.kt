@@ -12,7 +12,6 @@ import cho.chonotes.framework.presentation.folderlist.state.FolderListViewState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import java.util.*
 
 class RenameFolder(
     private val folderCacheDataSource: FolderCacheDataSource,
@@ -37,7 +36,7 @@ class RenameFolder(
             folderCacheDataSource.renameFolder(
                 primaryKey = selectedFolder.folder_id,
                 newFolderName = newFolderName,
-                timestamp = null // generate new timestamp
+                timestamp = null
             )
         }
 
@@ -88,7 +87,5 @@ class RenameFolder(
     companion object{
         val UPDATE_FOLDER_SUCCESS = "Successfully updated folder."
         val UPDATE_FOLDER_FAILED = "Failed to update folder."
-        val UPDATE_FOLDER_FAILED_PK = "Update failed. Folder is missing primary key."
-
     }
 }

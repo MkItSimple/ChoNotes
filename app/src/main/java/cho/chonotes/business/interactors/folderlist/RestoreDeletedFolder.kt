@@ -4,14 +4,13 @@ import cho.chonotes.business.data.cache.CacheResponseHandler
 import cho.chonotes.business.data.cache.abstraction.FolderCacheDataSource
 import cho.chonotes.business.data.cache.abstraction.NoteCacheDataSource
 import cho.chonotes.business.data.network.abstraction.FolderNetworkDataSource
-import cho.chonotes.business.data.network.abstraction.NoteNetworkDataSource
-import cho.chonotes.business.domain.model.Folder
-import cho.chonotes.business.domain.state.*
 import cho.chonotes.business.data.util.safeApiCall
 import cho.chonotes.business.data.util.safeCacheCall
+import cho.chonotes.business.domain.model.Folder
+import cho.chonotes.business.domain.state.*
 import cho.chonotes.business.interactors.common.DeleteFolder
 import cho.chonotes.framework.presentation.folderlist.state.FolderListViewState
-import cho.chonotes.framework.presentation.folderlist.state.FolderListViewState.*
+import cho.chonotes.framework.presentation.folderlist.state.FolderListViewState.FolderPendingDelete
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -19,7 +18,6 @@ import kotlinx.coroutines.flow.flow
 class RestoreDeletedFolder(
     private val noteCacheDataSource: NoteCacheDataSource,
     private val folderCacheDataSource: FolderCacheDataSource,
-    private val noteNetworkDataSource: NoteNetworkDataSource,
     private val folderNetworkDataSource: FolderNetworkDataSource
 ){
 
@@ -84,12 +82,10 @@ class RestoreDeletedFolder(
                 )
             }
 
-            // insert into "folders" node
             safeApiCall(IO){
                 folderNetworkDataSource.insertOrUpdateFolder(folder)
             }
 
-            // remove from "deleted" node
             safeApiCall(IO){
                 folderNetworkDataSource.deleteDeletedFolder(folder)
             }
@@ -97,10 +93,8 @@ class RestoreDeletedFolder(
     }
 
     companion object{
-
         val RESTORE_FOLDER_SUCCESS = "Successfully restored the deleted folder."
         val RESTORE_FOLDER_FAILED = "Failed to restore the deleted folder."
-
     }
 }
 

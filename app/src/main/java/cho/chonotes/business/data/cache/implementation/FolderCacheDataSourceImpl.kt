@@ -51,16 +51,6 @@ constructor(
         )
     }
 
-//    override suspend fun searchFolders(
-//        query: String,
-//        filterAndOrder: String,
-//        page: Int
-//    ): List<Folder> {
-//        return folderDaoService.returnOrderedQuery(
-//            query, filterAndOrder, page
-//        )
-//    }
-
     override suspend fun searchFoldersWithNotes(
         uid: String,
         query: String,

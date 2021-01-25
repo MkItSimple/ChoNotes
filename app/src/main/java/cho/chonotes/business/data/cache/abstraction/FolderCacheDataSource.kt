@@ -24,12 +24,6 @@ interface FolderCacheDataSource{
         timestamp: String?
     ): Int
 
-//    suspend fun searchFolders(
-//        query: String,
-//        filterAndOrder: String,
-//        page: Int
-//    ): List<Folder>
-
     suspend fun searchFoldersWithNotes(
         uid: String,
         query: String,

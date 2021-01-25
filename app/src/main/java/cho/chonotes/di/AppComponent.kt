@@ -4,12 +4,10 @@ import cho.chonotes.framework.presentation.BaseApplication
 import cho.chonotes.framework.presentation.MainActivity
 import cho.chonotes.framework.presentation.auth.AuthActivity
 import cho.chonotes.framework.presentation.folderlist.FolderListFragment
-import cho.chonotes.framework.presentation.splash.NoteNetworkSyncManager
 import cho.chonotes.framework.presentation.notedetail.NoteDetailFragment
 import cho.chonotes.framework.presentation.notelist.NoteListFragment
-import cho.chonotes.framework.presentation.selectfolder.SelectFolderFragment
+import cho.chonotes.framework.presentation.splash.NoteNetworkSyncManager
 import cho.chonotes.framework.presentation.splash.SplashFragment
-import cho.chonotes.notes.di.NoteViewModelModule
 import dagger.BindsInstance
 import dagger.Component
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -48,8 +46,6 @@ interface AppComponent {
     fun inject(noteDetailFragment: NoteDetailFragment)
 
     fun inject(folderListFragment: FolderListFragment)
-
-    fun inject(selectFolderFragment: SelectFolderFragment)
 }
 
 

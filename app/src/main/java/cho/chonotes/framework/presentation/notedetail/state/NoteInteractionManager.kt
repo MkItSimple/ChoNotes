@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import cho.chonotes.framework.presentation.notedetail.state.CollapsingToolbarState.*
 import cho.chonotes.framework.presentation.notedetail.state.NoteInteractionState.*
 
-// Both can not be in 'EditState' at the same time.
 class NoteInteractionManager{
 
     private val _noteTitleState: MutableLiveData<NoteInteractionState>
@@ -27,13 +26,13 @@ class NoteInteractionManager{
         get() = _collapsingToolbarState
 
     fun setCollapsingToolbarState(state: CollapsingToolbarState){
-        if(!state.toString().equals(_collapsingToolbarState.value.toString())){
+        if(state.toString() != _collapsingToolbarState.value.toString()){
             _collapsingToolbarState.value = state
         }
     }
 
     fun setNewNoteTitleState(state: NoteInteractionState){
-        if(!noteTitleState.toString().equals(state.toString())){
+        if(noteTitleState.toString() != state.toString()){
             _noteTitleState.value = state
             when(state){
 
@@ -45,7 +44,7 @@ class NoteInteractionManager{
     }
 
     fun setNewNoteBodyState(state: NoteInteractionState){
-        if(!noteBodyState.toString().equals(state.toString())){
+        if(noteBodyState.toString() != state.toString()){
             _noteBodyState.value = state
             when(state){
 
@@ -56,20 +55,17 @@ class NoteInteractionManager{
         }
     }
 
-    fun isEditingTitle() = noteTitleState.value.toString().equals(EditState().toString())
+    fun isEditingTitle() = noteTitleState.value.toString() == EditState().toString()
 
-    fun isEditingBody() = noteBodyState.value.toString().equals(EditState().toString())
+    fun isEditingBody() = noteBodyState.value.toString() == EditState().toString()
 
     fun exitEditState(){
         _noteTitleState.value = DefaultState()
         _noteBodyState.value = DefaultState()
     }
 
-    // return true if either title or body are in EditState
-    fun checkEditState() = noteTitleState.value.toString().equals(EditState().toString())
-            || noteBodyState.value.toString().equals(EditState().toString())
-
-
+    fun checkEditState() = noteTitleState.value.toString() == EditState().toString()
+            || noteBodyState.value.toString() == EditState().toString()
 
 }
 

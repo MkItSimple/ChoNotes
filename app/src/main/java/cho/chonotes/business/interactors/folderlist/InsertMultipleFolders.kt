@@ -15,7 +15,6 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
-// For testing
 class InsertMultipleFolders(
     private val folderCacheDataSource: FolderCacheDataSource,
     private val folderNetworkDataSource: FolderNetworkDataSource
